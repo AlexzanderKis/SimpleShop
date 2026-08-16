@@ -5,8 +5,10 @@ import org.com.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+// сервис для создания заказа из текущей корзины пользователя.
+
 public interface OrderService {
-    Order createOrder(User user, String deliveryAddress, CartService cartService);// можно передать корзину
+    Order createOrder(User user, String deliveryAddress, CartService cartService); // можно передать корзину
 
     Order repeatOrder(Order previousOrder);
 
@@ -18,5 +20,5 @@ public interface OrderService {
 
     void cancelOrder(Order order);
 
-    void clearOrder(Order order);
+    void clearOrder(Cart cart);
 }

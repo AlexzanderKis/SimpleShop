@@ -8,6 +8,7 @@ import org.com.service.OrderService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService {
     private final OrderRepo orderRepo;
@@ -34,23 +35,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
-//        OrderStatus.NEW_ORDER;
-//        OrderStatus.CREATED;
-//        OrderStatus.CANCELED;
-//        OrderStatus.DELIVERED;
-//        OrderStatus.PAID;
-//        OrderStatus.NOT_PAID;
-        return null;
-    }
 
-    @Override
-    public Order repeatOrder(Order previousOrder) {
-        return null;
+        if (cartService.getItem().isEmpty()) {
+            throw new IllegalStateException("Can not proceed order. Your cart is empty!");
+        }
+
+//        Long userId = Long.valueOf(user.getUserId());
+        OrderStatus orderStatus = OrderStatus.NEW_ORDER;
+
+        Order order = new Order(user,
+                UUID.randomUUID().toString(),
+                cartService.getItem().stream().map(CartItem::getProduct).toList(),
+                cartService.getTotalPrice(),
+                cartService.getTotalPrice(),
+                orderStatus,
+                deliveryAddress
+        );
+        orderRepo.save(order);
+        cartService.clearCart();
+        return order;
     }
 
     @Override
     public List<Order> getOrderByUser(User user) {
         return List.of();
+    }
+
+    @Override
+    public Order repeatOrder(Order previousOrder) {
+        return null;
     }
 
     @Override
@@ -60,11 +73,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void cancelOrder(Order order) {
-
+        OrderStatus canceled = OrderStatus.CANCELED;
     }
 
     @Override
-    public void clearOrder(Order order) {
-
+    public void clearOrder(Cart cart) {
+        cart.clearCart();
     }
 }

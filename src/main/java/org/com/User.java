@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    private String userId;
-    private String userName;
-    private String userEmail;
-    private String userPhoneNumber;
+    private final String userId;
+    private final String userName;
+    private final String userEmail;
+    private final String userPhoneNumber;
     private Cart userCart;
     private List<Order> userOrder;
-
-    public User() { }
 
     public User(String userId, String userName, String userEmail, String userPhoneNumber, Cart userCart, List<Order> userOrder) {
         this.userId = userId;
@@ -27,8 +25,8 @@ public class User {
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPhoneNumber = userPhoneNumber;
-        this.userCart = null;
-        this.userOrder = new ArrayList<>();
+//        this.userCart = null;
+//        this.userOrder = new ArrayList<>();
     }
 
     public String getUserId() {

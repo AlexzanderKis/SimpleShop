@@ -20,9 +20,10 @@ import org.com.service.UserService;
  * Система рейтинга для товаров
  * Простая рекомендательная система для покупок
  */
-public class Main {
+public class Main { // StartShop
     public static void main(String[] args) {
         System.out.println("Hello, World!");
+
 /**
         // Репозитории
         ProductRepo productRepository = new InMemoryProductRepository();
@@ -41,5 +42,6 @@ public class Main {
         // Передаём сервисы в UI
 //        ConsoleUI ui = new ConsoleUI(productService, cartService, orderService, userService, reviewService, recommendationService);
 //        ui.start();
+
     }
 }
