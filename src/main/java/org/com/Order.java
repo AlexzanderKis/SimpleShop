@@ -2,6 +2,7 @@ package org.com;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class Order {
     private final User user;
@@ -10,7 +11,7 @@ public class Order {
     private final BigDecimal orderTotalPrice;
     private final BigDecimal orderTotalPriceWithDiscount;
     private final OrderStatus orderCurrentStatus;
-    private final String orderDeliveryAddress;
+    private String orderDeliveryAddress;
 
     public Order(User user,
                  String orderID,
@@ -52,7 +53,25 @@ public class Order {
         return orderCurrentStatus;
     }
 
+//    public void setOrderCurrentStatus(OrderStatus orderNewStatus) {
+//        this.orderCurrentStatus = orderNewStatus;
+//    }
+
+    public Order newStatus(OrderStatus orderNewStatus) {
+        return new Order(this.user,
+                this.orderID,
+                this.orderProductList,
+                this.orderTotalPrice,
+                this.orderTotalPriceWithDiscount,
+                orderNewStatus,
+                this.orderDeliveryAddress);
+    }
+
     public String getOrderDeliveryAddress() {
         return orderDeliveryAddress;
+    }
+
+    public void setOrderDeliveryAddress(String orderNewDeliveryAddress) {
+        this.orderDeliveryAddress = orderNewDeliveryAddress;
     }
 }

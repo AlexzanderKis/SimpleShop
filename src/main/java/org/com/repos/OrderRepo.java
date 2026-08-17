@@ -1,13 +1,18 @@
 package org.com.repos;
 
 import org.com.Order;
+import org.com.User;
 
-import java.util.Optional;
+import java.util.List;
+
+// Репозиторий OrderRepo отвечает за хранение и поиск объектов Order
 
 public interface OrderRepo {
-    Order save(Order order);
+    void save(Order order);
 
-    Optional<Order> findById(Long id);
+    List<Order> findById(String id);
 
-    Optional<Order> findByUserId(Long userId);
+    List<Order> findByUserId(String userId);
+
+    List<Order> findByUser(User user);
 }

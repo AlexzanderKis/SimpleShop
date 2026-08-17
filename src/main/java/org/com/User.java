@@ -1,5 +1,7 @@
 package org.com;
 
+import org.com.repos.UserRepo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +10,15 @@ public class User {
     private final String userName;
     private final String userEmail;
     private final String userPhoneNumber;
-    private Cart userCart;
-    private List<Order> userOrder;
+    private final Cart userCart;
+    private final List<Order> userOrder;
 
-    public User(String userId, String userName, String userEmail, String userPhoneNumber, Cart userCart, List<Order> userOrder) {
+    public User(String userId,
+                String userName,
+                String userEmail,
+                String userPhoneNumber,
+                Cart userCart,
+                List<Order> userOrder) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
@@ -20,13 +27,16 @@ public class User {
         this.userOrder = userOrder;
     }
 
-    public User(String userId, String userName, String userEmail, String userPhoneNumber) {
+    public User(String userId,
+                String userName,
+                String userEmail,
+                String userPhoneNumber) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPhoneNumber = userPhoneNumber;
-//        this.userCart = null;
-//        this.userOrder = new ArrayList<>();
+        this.userCart = null;
+        this.userOrder = new ArrayList<>();
     }
 
     public String getUserId() {

@@ -3,10 +3,9 @@ package org.com;
 public enum OrderStatus {
     NEW_ORDER,
     CREATED,
-//    PROCESSING,
+    PROCESSING,
     PAID,
     NOT_PAID,
     DELIVERED,
-//    DONE,
     CANCELED;
 }

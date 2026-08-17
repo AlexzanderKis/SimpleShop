@@ -33,18 +33,18 @@ public class OrderServiceImpl implements OrderService {
         return productRepo;
     }
 
+    // создание нового заказа
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
 
         if (cartService.getItem().isEmpty()) {
             throw new IllegalStateException("Can not proceed order. Your cart is empty!");
         }
-
 //        Long userId = Long.valueOf(user.getUserId());
         OrderStatus orderStatus = OrderStatus.NEW_ORDER;
 
         Order order = new Order(user,
-                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), // создание рандомного ID
                 cartService.getItem().stream().map(CartItem::getProduct).toList(),
                 cartService.getTotalPrice(),
                 cartService.getTotalPrice(),
@@ -56,24 +56,49 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    // найти заказ через пользователя
     @Override
     public List<Order> getOrderByUser(User user) {
-        return List.of();
+        return List.copyOf(orderRepo.findByUserId(user.getUserId()));
     }
 
+    // отмена заказа
+    @Override
+    public Order cancelOrder(Order order) {
+//        if (order.getOrderCurrentStatus().equals(OrderStatus.DELIVERED)) {
+//            throw new RuntimeException("You can not cancel already delivered order");
+//        }
+//        if (order.getOrderCurrentStatus().equals(OrderStatus.CANCELED)){
+//            throw new RuntimeException("Order already canceled");
+//        }
+//
+//        order.setOrderCurrentStatus(OrderStatus.CANCELED);
+//        orderRepo.save(order);
+        if (order.getOrderCurrentStatus() == OrderStatus.CANCELED || order.getOrderCurrentStatus() == OrderStatus.DELIVERED) {
+            throw new IllegalStateException("Can not proceed. No order OR order is done");
+        }
+        Order canceledOrder = order.newStatus(OrderStatus.CANCELED);
+        orderRepo.save(canceledOrder);
+        return canceledOrder;
+    }
+
+    // повтор уже выполненного заказа
     @Override
     public Order repeatOrder(Order previousOrder) {
-        return null;
+        Order orderRepeat = new Order(previousOrder.getUser(),
+                UUID.randomUUID().toString(),
+                previousOrder.getOrderProductList(),
+                previousOrder.getOrderTotalPrice(),
+                previousOrder.getOrderTotalPriceWithDiscount(),
+                OrderStatus.NEW_ORDER,
+                previousOrder.getOrderDeliveryAddress());
+        orderRepo.save(orderRepeat);
+        return orderRepeat;
     }
 
     @Override
     public BigDecimal totalOrderPrice(Order order) {
         return null;
-    }
-
-    @Override
-    public void cancelOrder(Order order) {
-        OrderStatus canceled = OrderStatus.CANCELED;
     }
 
     @Override

@@ -18,7 +18,7 @@ public interface OrderService {
 
     BigDecimal totalOrderPrice(Order order);
 
-    void cancelOrder(Order order);
+    Order cancelOrder(Order order);
 
     void clearOrder(Cart cart);
 }
