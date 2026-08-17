@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// Cart — это временное состояние:
+// пользователь добавляет/удаляет товары,
+// меняет количество,
+// корзина динамически рассчитывает общую сумму через getTotalPrice().
 public class Cart implements CartService {
 //    CartItem cartItem = null;
     private final List<CartItem> productsInCart = new ArrayList<>();
-
 /** BAD
  * Поле класса cartItem: Переменная CartItem cartItem объявлена на уровне класса, но не инициализирована (null).
  * Из-за этого вызов cartItem.setQuantity(...) приведет к ошибке NullPointerException.

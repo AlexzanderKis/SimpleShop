@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
         return productRepo;
     }
 
-    // создание нового заказа
+    // Валидация корзины, создание заказа с уникальным UUID, сохранение и очистка корзины
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
 
@@ -56,13 +56,13 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    // найти заказ через пользователя
+    // Поиск списка заказов пользователя
     @Override
     public List<Order> getOrderByUser(User user) {
         return List.copyOf(orderRepo.findByUserId(user.getUserId()));
     }
 
-    // отмена заказа
+    // Отмена заказа. Проверка статуса, создание обновлённой копии со статусом CANCELED
     @Override
     public Order cancelOrder(Order order) {
 //        if (order.getOrderCurrentStatus().equals(OrderStatus.DELIVERED)) {
@@ -78,31 +78,43 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalStateException("Can not proceed. No order OR order is done");
         }
         Order canceledOrder = order.newStatus(OrderStatus.CANCELED);
-        orderRepo.save(canceledOrder);
+        orderRepo.save(canceledOrder); // сохранение копии заказа (отменённый)
         return canceledOrder;
     }
 
-    // повтор уже выполненного заказа
+    // Повтор уже выполненного заказа. Перенос состава завершённого заказа обратно в CartService
     @Override
-    public Order repeatOrder(Order previousOrder) {
-        Order orderRepeat = new Order(previousOrder.getUser(),
-                UUID.randomUUID().toString(),
-                previousOrder.getOrderProductList(),
-                previousOrder.getOrderTotalPrice(),
-                previousOrder.getOrderTotalPriceWithDiscount(),
-                OrderStatus.NEW_ORDER,
-                previousOrder.getOrderDeliveryAddress());
-        orderRepo.save(orderRepeat);
-        return orderRepeat;
+    public CartService repeatOrder(Order previousOrder, CartService cartService) {
+//        Order orderRepeat = new Order(previousOrder.getUser(),
+//                UUID.randomUUID().toString(),
+//                previousOrder.getOrderProductList(),
+//                previousOrder.getOrderTotalPrice(),
+//                previousOrder.getOrderTotalPriceWithDiscount(),
+//                OrderStatus.NEW_ORDER,
+//                previousOrder.getOrderDeliveryAddress());
+//        orderRepo.save(orderRepeat);
+//        return orderRepeat;
+
+        for (Product product : previousOrder.getOrderProductList()){
+            // Передавая 1, мы добавляем каждую единицу товара из списка,
+            // а метод addItem внутри корзины сам объединит одинаковые товары и увеличит их количество
+            int repeatProductQuantity = 1;
+            cartService.addItem(product, repeatProductQuantity);
+        }
+        return cartService;
     }
 
+    // Возврат зафиксированной стоимости заказа // TODO расчёт с учётом скидки
     @Override
     public BigDecimal totalOrderPrice(Order order) {
-        return null;
+//        if (discount exist){
+//            return order.getOrderTotalPriceWithDiscount();
+//        }
+        return order.getOrderTotalPrice();
     }
 
-    @Override
-    public void clearOrder(Cart cart) {
-        cart.clearCart();
-    }
+//    @Override
+//    public void clearOrder(Cart cart) {
+//        cart.clearCart();
+//    }
 }

@@ -2,7 +2,6 @@ package org.com;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 public class Order {
     private final User user;
@@ -40,6 +39,18 @@ public class Order {
     public List<Product> getOrderProductList() {
         return orderProductList;
     }
+
+//    public BigDecimal getOrderTotalPrice() {
+//        return orderTotalPrice;
+//    }
+
+    // Order — это зафиксированный снимок (snapshot) на момент покупки:
+    // у него уже есть сохранённая итоговая сумма (orderTotalPrice),
+    // которая не должна меняться со временем,
+    // даже если цены на товары в каталоге изменятся.
+//    public BigDecimal getOrderTotalPrice(Cart cart) {
+//        return cart.getTotalPrice();
+//    }
 
     public BigDecimal getOrderTotalPrice() {
         return orderTotalPrice;

@@ -10,7 +10,7 @@ import java.util.List;
 public interface OrderService {
     Order createOrder(User user, String deliveryAddress, CartService cartService); // можно передать корзину
 
-    Order repeatOrder(Order previousOrder);
+    CartService repeatOrder(Order previousOrder, CartService cartService);
 
 //    OrderStatus trackOrder(Long orderId);
 
@@ -20,5 +20,4 @@ public interface OrderService {
 
     Order cancelOrder(Order order);
 
-    void clearOrder(Cart cart);
 }
