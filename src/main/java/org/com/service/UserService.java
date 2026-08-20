@@ -9,7 +9,7 @@ public interface UserService {
     User registerUser(String name, String phoneNumber, String email, String password)
             throws Exception;
 
-    Optional<User> login(String email, String password);
+    User login(String email, String password) throws UserLoginException;
 
     Optional<User> getCurrentUser();
 

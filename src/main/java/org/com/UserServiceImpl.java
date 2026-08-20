@@ -4,6 +4,7 @@ import static org.com.tools.RUPhoneNumberValidator.validateNumber;
 import static org.com.tools.PasswordValidator.validatePassword;
 
 import org.apache.commons.validator.routines.EmailValidator;
+
 import org.com.exceptions.*;
 import org.com.repos.UserRepo;
 import org.com.service.UserService;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
         return userRepo;
     }
 
+    // регистрирует и валидирует данные
     @Override
     public User registerUser(String name, String phoneNumber, String email, String password)
             throws Exception {
@@ -59,16 +61,19 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    // аутентифицирует и обновляет текущую сессию
     @Override
-    public Optional<User> login(String email, String password) {
-        User user = new User(currentUser.getUserId(),
-                currentUser.getUserName(),
-                currentUser.getUserEmail(),
-                currentUser.getUserPhoneNumber());
-        if (userRepo.findByEmail(email).isPresent()) {
-            System.out.println();
+    public User login(String email, String password) throws UserLoginException {
+        Optional<User> userToLogin = userRepo.findByEmail(email);
+
+        if (userToLogin.isPresent() && userToLogin.get().getUserPassword().equals(password)) {
+            System.out.println("user exist");
+            System.out.println("password correct");
+            this.currentUser = userToLogin.get();
+        } else {
+            throw new UserLoginException("user email no exist or password incorrect");
         }
-        return Optional.empty();
+        return currentUser;
     }
 
     @Override

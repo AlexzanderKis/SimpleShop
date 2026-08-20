@@ -19,5 +19,4 @@ public interface OrderService {
     BigDecimal totalOrderPrice(Order order);
 
     Order cancelOrder(Order order);
-
 }
