@@ -8,13 +8,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    List<Product> getAllProducts();
+    List<Product> getAllProduct(); // список продуктов
 
-    List<Product> filterByCategory(CategoryOfProd category);
+    List<CategoryOfProd> getAllProductCategories(); // список категорий
 
-    List<Product> filterByPriceRange(BigDecimal min, BigDecimal max);
+    List<Product> filterProductByCategory(CategoryOfProd category); // отфильтровать продукты по категории
 
-    List<Product> searchByKeyword(String keyword);
+    List<Product> filterProductByPriceRange(BigDecimal min, BigDecimal max); // фильтровать по цене продукта от мин к мах
 
-    Optional<Product> getProductById(Long id);
+    List<Product> searchProductByKeyword(String keyword); // искать прод по ключу
+
+    Optional<Product> getProductById(Long id); // получить продукт по ID
 }

@@ -4,26 +4,37 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Product {
-    private final String productId;
+    private final Long productId;
     private final String productName;
+    private final CategoryOfProd productCategory;
     private final String productBrand;
     private final BigDecimal productPrice;
     private final List<String> productKeywords;
 
-    public Product(String productId, String productName, String productBrand, BigDecimal productPrice, List<String> productKeywords) {
+    public Product(Long productId,
+                   String productName,
+                   String productCategory,
+                   String productBrand,
+                   BigDecimal productPrice,
+                   List<String> productKeywords) {
         this.productId = productId;
         this.productName = productName;
+        this.productCategory = CategoryOfProd.valueOf(productCategory);
         this.productBrand = productBrand;
         this.productPrice = productPrice;
         this.productKeywords = productKeywords;
     }
 
-    public String getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
     public String getProductName() {
         return productName;
+    }
+
+    public CategoryOfProd getProductCategory() {
+        return productCategory;
     }
 
     public String getProductBrand() {

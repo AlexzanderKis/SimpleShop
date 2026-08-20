@@ -24,6 +24,14 @@ public class Main { // StartShop
     public static void main(String[] args) {
         System.out.println("Hello, World!");
 
+        // register user
+//        String name = "Achilles";
+//        String phoneNumber = "89997776655";
+//        String email = "allfreetome@gmail.com";
+//        String password = "qwerty123";
+
+//        return new User();
+
 /**
         // Репозитории
         ProductRepo productRepository = new InMemoryProductRepository();

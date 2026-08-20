@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepo {
-    List<Product> findAll();
+
+    List<Product> getAllProduct(); // список продуктов
 
     Optional<Product> findById(Long id);
 
