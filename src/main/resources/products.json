@@ -1,0 +1,74 @@
+[
+  {
+    "productId": 31,
+    "productName": "Green Apple",
+    "productCategory": "FRUIT",
+    "productBrand": "Eden",
+    "productPrice": 9999.99,
+    "productKeywords": ["green", "apple", "eden", "divine"]
+  },
+  {
+    "productId": 33,
+    "productName": "Beef jerk-off",
+    "productCategory": "MEAT",
+    "productBrand": "Jerk-Off Beef",
+    "productPrice": 199.99,
+    "productKeywords": ["beef", "jerky", "jerk-off", "jerky"]
+  },
+  {
+    "productId": 39,
+    "productName": "Black arse Coffee",
+    "productCategory": "BEVERAGES",
+    "productBrand": "Negro de Drink",
+    "productPrice": 99.99,
+    "productKeywords": ["coffee", "black", "black coffee", "negro", "black drink"]
+  },
+  {
+    "productId": 93,
+    "productName": "Fresh Tit Cow Milk",
+    "productCategory": "FRESH_PRODUCE",
+    "productBrand": "TityCowy",
+    "productPrice": 399.99,
+    "productKeywords": ["cow", "milk", "cow milk", "tits milk", "fresh milk"]
+  },
+  {
+    "productId": 38,
+    "productName": "Green Mint Tea",
+    "productCategory": "BEVERAGES",
+    "productBrand": "Green Mountain",
+    "productPrice": 599.99,
+    "productKeywords": ["tea", "green", "green tea", "mint", "mountain", "correct drink"]
+  },
+  {
+    "productId": 333,
+    "productName": "Fresh Octopus",
+    "productCategory": "SEAFOOD",
+    "productBrand": "OctoPussy",
+    "productPrice": 99.99,
+    "productKeywords": ["octopus", "fresh", "sea food"]
+  },
+  {
+    "productId": 32,
+    "productName": "Yogurt Vanilla",
+    "productCategory": "FRESH_PRODUCE",
+    "productBrand": "Vanilla Puddle",
+    "productPrice": 999.99,
+    "productKeywords": ["vogue yogurt", "yogurt", "vanilla", "vanilla puddle"]
+  },
+  {
+    "productId": 99,
+    "productName": "Red Tomato",
+    "productCategory": "VEGETABLE",
+    "productBrand": "Auto-Tomato",
+    "productPrice": 99.99,
+    "productKeywords": ["auto tomato", "tomato", "red tomato"]
+  },
+  {
+    "productId": 34,
+    "productName": "Turkey Meat",
+    "productCategory": "MEAT",
+    "productBrand": "Turkey from Turkey",
+    "productPrice": 499.99,
+    "productKeywords": ["meat", "turkey meat", "turkish meat", "turkish bird"]
+  }
+]
