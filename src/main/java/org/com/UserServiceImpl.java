@@ -8,6 +8,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.com.exceptions.*;
 import org.com.repos.UserRepo;
 import org.com.service.UserService;
+import org.com.tools.PasswordEncoder;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (validatePassword(password)) {
+            user.setUserPassword(PasswordEncoder.hashPassword(password));
             userRepo.save(user);
             System.out.println("User saved");
         } else {
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public User login(String email, String password) throws UserLoginException {
         Optional<User> userToLogin = userRepo.findByEmail(email);
 
-        if (userToLogin.isPresent() && userToLogin.get().getUserPassword().equals(password)) {
+        if (userToLogin.isPresent() && PasswordEncoder.hashMatchesPassword(password, userToLogin.get().getUserPassword())) {
             System.out.println("user exist");
             System.out.println("password correct");
             this.currentUser = userToLogin.get();

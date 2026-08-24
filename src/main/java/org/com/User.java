@@ -8,7 +8,7 @@ public class User {
     private final String userName;
     private final String userEmail;
     private final String userPhoneNumber;
-    private final String userPassword;
+    private String userPassword;
     private final Cart userCart;
     private final List<Order> userOrder;
 
@@ -79,6 +79,10 @@ public class User {
 
     public String getUserPassword() {
         return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     public Cart getUserCart() {
