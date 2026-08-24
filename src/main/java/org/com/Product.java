@@ -4,22 +4,22 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Product {
-    private final Long productId;
-    private final String productName;
-    private final CategoryOfProd productCategory;
-    private final String productBrand;
-    private final BigDecimal productPrice;
-    private final List<String> productKeywords;
+    private Long productId;
+    private String productName;
+    private CategoryOfProd productCategory;
+    private String productBrand;
+    private BigDecimal productPrice;
+    private List<String> productKeywords;
 
     public Product(Long productId,
                    String productName,
-                   String productCategory,
+                   CategoryOfProd productCategory,
                    String productBrand,
                    BigDecimal productPrice,
                    List<String> productKeywords) {
         this.productId = productId;
         this.productName = productName;
-        this.productCategory = CategoryOfProd.valueOf(productCategory);
+        this.productCategory = productCategory;
         this.productBrand = productBrand;
         this.productPrice = productPrice;
         this.productKeywords = productKeywords;
@@ -47,5 +47,29 @@ public class Product {
 
     public List<String> getProductKeywords() {
         return productKeywords;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public void setProductCategory(CategoryOfProd productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
+    }
+
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public void setProductKeywords(List<String> productKeywords) {
+        this.productKeywords = productKeywords;
     }
 }
