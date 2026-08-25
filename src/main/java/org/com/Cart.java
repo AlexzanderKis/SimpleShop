@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// Cart — это временное состояние:
+// TODO rename class to CartServiceImpl.java
+// CartServiceImpl or Cart — это временное состояние:
 // пользователь добавляет/удаляет товары,
 // меняет количество,
 // корзина динамически рассчитывает общую сумму через getTotalPrice().
@@ -26,17 +27,26 @@ public class Cart implements CartService {
     }
 */
 
+    // Метод ожидает конкретный объект Product и количество quantity.
     public void addItem(Product product, int quantity) {
         for (CartItem item : productsInCart) {
             if (item.getProduct().equals(product)) {
                 //Если товар найден, мы обновляем его количество и сразу выходим из метода.
                 item.setQuantity(item.getQuantity() + quantity);
+                System.out.printf("""
+                                ?Item's %s quantity changed to %s?
+                                """
+                        ,product.getProductName(),quantity);
                 return;
             }
         }
         //Если цикл прошёл по всей корзине и ничего не нашёл, создаётся и добавляется новая позиция CartItem.
         CartItem cartItem = new CartItem(product, quantity);
         productsInCart.add(cartItem);
+        System.out.printf("""
+                        ?Item %s in quantity of %s added to cart?
+                        """
+                , product.getProductName(), quantity);
     }
 
     @Override
@@ -56,12 +66,20 @@ public class Cart implements CartService {
         // Если количество product = 0, то removeItem() из корзины
         if (quantity <= 0) {
             removeItem(product);
+            System.out.printf("""
+                                ?Item %s removed from cart?
+                                """
+                    ,product.getProductName());
             return;
         }
         // Если есть такой product, то setQuantity
         for (CartItem item : productsInCart) {
             if (item.getProduct().equals(product)) {
                 item.setQuantity(quantity);
+                System.out.printf("""
+                                ?Item's %s quantity changed to %s?
+                                """
+                        ,product.getProductName(),quantity);
                 return;
             }
         }
@@ -86,6 +104,13 @@ public class Cart implements CartService {
     public List<CartItem> getItem() {
 //        return productsInCart;
 //        return List.copyOf(productsInCart); // creates an immutable copy. Changing the original list will not affect it.
+
+//        List<CartItem> unmodList = Collections.unmodifiableList(productsInCart);
+//        String cartStr = unmodList.toString();
+//        System.out.printf("""
+//                Cart items:
+//                %s
+//                """,cartStr);
         return Collections.unmodifiableList(productsInCart); //  creates an unmodifiable view. It is not immutable because it changes if you're changing the original, backing collection
     }
 
@@ -97,5 +122,6 @@ public class Cart implements CartService {
         }
 */
         productsInCart.clear();
+        System.out.println("?CartEmpty?");
     }
 }
