@@ -9,7 +9,7 @@ public interface ProductRepo {
 
     List<Product> getAllProduct(); // список продуктов
 
-    Optional<Product> findById(Long id);
+    Product findById(Long id);
 
     //    Optional<Product> findBySimplifiedName(String name);
 
