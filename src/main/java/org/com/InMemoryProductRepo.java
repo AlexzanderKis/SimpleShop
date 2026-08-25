@@ -5,7 +5,6 @@ import org.com.repos.ProductRepo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 // класс, внутри которого данные хранятся в Map (в оперативной памяти)
 public class InMemoryProductRepo implements ProductRepo {
@@ -18,8 +17,8 @@ public class InMemoryProductRepo implements ProductRepo {
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
-        return Optional.ofNullable(productMap.get(id));
+    public Product findById(Long id) {
+        return productMap.get(id);
     }
 
     @Override
