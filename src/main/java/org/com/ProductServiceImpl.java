@@ -54,6 +54,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<Product> getProductById(Long id) {
-        return productRepo.findById(id);
+        return Optional.ofNullable(productRepo.findById(id));
     }
 }
