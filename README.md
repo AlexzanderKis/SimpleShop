@@ -1,0 +1,1 @@
+**_`SimpleShop realisation`_**
