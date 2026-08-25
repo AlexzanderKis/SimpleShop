@@ -6,10 +6,10 @@ import org.com.exceptions.*;
 import java.util.Optional;
 
 public interface UserService {
-    User registerUser(String name, String phoneNumber, String email, String password)
+    void registerUser(String name, String phoneNumber, String email, String password)
             throws Exception;
 
-    User login(String email, String password) throws UserLoginException;
+    void login(String email, String password) throws UserLoginException;
 
     Optional<User> getCurrentUser();
 
