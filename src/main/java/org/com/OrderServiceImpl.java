@@ -8,6 +8,7 @@ import org.com.service.OrderService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService {
@@ -36,22 +37,33 @@ public class OrderServiceImpl implements OrderService {
     // Валидация корзины, создание заказа с уникальным UUID, сохранение и очистка корзины
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
-
         if (cartService.getItem().isEmpty()) {
             throw new IllegalStateException("Can not proceed order. Your cart is empty!");
         }
 //        Long userId = Long.valueOf(user.getUserId());
         OrderStatus orderStatus = OrderStatus.NEW_ORDER;
-
         Order order = new Order(user,
-                UUID.randomUUID().toString(), // создание рандомного ID
+                UUID.randomUUID().toString().substring(0,23).toUpperCase(Locale.ROOT), // создание рандомного ID заказа 24 символа
                 cartService.getItem().stream().map(CartItem::getProduct).toList(),
                 cartService.getTotalPrice(),
-                cartService.getTotalPrice(),
+                cartService.getTotalPrice(), // discount price
                 orderStatus,
                 deliveryAddress
         );
         orderRepo.save(order);
+        System.out.printf("""
+                        
+                        Order created: %s
+                        Ordered by user: %s
+                        Total order price: %s
+                        Total order %% price: %s
+                        """,
+                order.getOrderID(),
+                order.getUser().getUserId(),
+                order.getOrderTotalPrice(),
+                order.getOrderTotalPriceWithDiscount());
+
+        // clear the cart
         cartService.clearCart();
         return order;
     }
@@ -104,12 +116,16 @@ public class OrderServiceImpl implements OrderService {
         return cartService;
     }
 
-    // Возврат зафиксированной стоимости заказа // TODO расчёт с учётом скидки
+    // Возврат зафиксированной стоимости заказа и расчёт стоимости со скидкой
     @Override
     public BigDecimal totalOrderPrice(Order order) {
-//        if (discount exist){
-//            return order.getOrderTotalPriceWithDiscount();
-//        }
+        BigDecimal discountPrice = BigDecimal.valueOf(90999.99);
+        if (order.getOrderTotalPrice().compareTo(discountPrice) >= 0) {
+            System.out.printf("order total price with %% %s", order.getOrderTotalPriceWithDiscount());
+            return order.getOrderTotalPriceWithDiscount();
+        }
+
+        System.out.printf("order total price %s", order.getOrderTotalPrice());
         return order.getOrderTotalPrice();
     }
 
