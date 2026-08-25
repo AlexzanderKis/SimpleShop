@@ -69,11 +69,15 @@ public class UserServiceImpl implements UserService {
         Optional<User> userToLogin = userRepo.findByEmail(email);
 
         if (userToLogin.isPresent() && PasswordEncoder.hashMatchesPassword(password, userToLogin.get().getUserPassword())) {
-            System.out.println("user exist");
-            System.out.println("password correct");
+            System.out.print("""
+                            *<user exist>*
+                    """);
+            System.out.print("""
+                            *<password correct>*
+                    """);
             this.currentUser = userToLogin.get();
         } else {
-            throw new UserLoginException("user email no exist or password incorrect");
+            throw new UserLoginException("*<user email no exist or password incorrect>*");
         }
         return currentUser;
     }
