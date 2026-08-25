@@ -15,7 +15,8 @@ public class User {
     public User(String userId,
                 String userName,
                 String userEmail,
-                String userPhoneNumber, String userPassword,
+                String userPhoneNumber,
+                String userPassword,
                 Cart userCart,
                 List<Order> userOrder) {
         this.userId = userId;
