@@ -10,6 +10,7 @@ import org.com.repos.UserRepo;
 import org.com.service.UserService;
 import org.com.tools.PasswordEncoder;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,58 +29,56 @@ public class UserServiceImpl implements UserService {
 
     // регистрирует и валидирует данные
     @Override
-    public User registerUser(String name, String phoneNumber, String email, String password)
+    public void registerUser(String name, String phoneNumber, String email, String password)
             throws Exception {
 
-        User user = new User(UUID.randomUUID().toString(),
+        User user = new User(UUID.randomUUID().toString().substring(0,12).toUpperCase(Locale.ROOT),
                 name,
                 email,
                 phoneNumber);
 
         if (EmailValidator.getInstance().isValid(email)) {
             if (userRepo.findByEmail(email).isPresent()) {
-                throw new MailAlreadyExistException("email already exist");
+                throw new MailAlreadyExistException("?EmailAlreadyExist?");
             }
         } else {
-            throw new InvalidEmailException("Invalid email"); // "email incorrect"
+            throw new InvalidEmailException("?InvalidEmail?"); // "email incorrect"
         }
 
         if (validateNumber(phoneNumber)) {
             if (userRepo.findByPhoneNumber(phoneNumber).isPresent()) {
-                throw new PhoneNumberAlreadyExistException("phone number already exist");
+                throw new PhoneNumberAlreadyExistException("?PhoneNumberAlreadyExist?");
             }
         } else {
-            throw new InvalidPhoneNumberException("incorrect phone number"); // phone num incorrect
+            throw new InvalidPhoneNumberException("?IncorrectPhoneNumber?"); // phone num incorrect
         }
 
         if (validatePassword(password)) {
             user.setUserPassword(PasswordEncoder.hashPassword(password));
             userRepo.save(user);
-            System.out.println("User saved");
+            System.out.println("?UserSaved?");
         } else {
-            throw new InvalidPasswordException("password incorrect"); // password incorrect
+            throw new InvalidPasswordException("?PasswordIncorrect?"); // password incorrect
         }
-        System.out.println("Registration successfully done");
-        return user;
+        System.out.println("?Registration successfully done?");
     }
 
     // аутентифицирует и обновляет текущую сессию
     @Override
-    public User login(String email, String password) throws UserLoginException {
+    public void login(String email, String password) throws UserLoginException {
         Optional<User> userToLogin = userRepo.findByEmail(email);
 
         if (userToLogin.isPresent() && PasswordEncoder.hashMatchesPassword(password, userToLogin.get().getUserPassword())) {
             System.out.print("""
-                            *<user exist>*
+                            ?UserExist?
                     """);
             System.out.print("""
-                            *<password correct>*
+                            ?PasswordCorrect?
                     """);
             this.currentUser = userToLogin.get();
         } else {
-            throw new UserLoginException("*<user email no exist or password incorrect>*");
+            throw new UserLoginException("?user email no exist or password incorrect?");
         }
-        return currentUser;
     }
 
     @Override
