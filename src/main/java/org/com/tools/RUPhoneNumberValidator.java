@@ -10,10 +10,10 @@ public class RUPhoneNumberValidator {
             .compile("^(\\+7|7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$");
 
     public static boolean validateNumber(String phoneNumber) {
-        if (userRepo.findByEmail(phoneNumber).isPresent()){
-            System.out.println("phNum exist");
-            return false;
-        }
+//        if (userRepo.findByPhoneNumber(phoneNumber).isPresent()){
+//            System.out.println("phNum exist");
+//            return false;
+//        }
         return PATTERN.matcher(phoneNumber).matches();
     }
 }
