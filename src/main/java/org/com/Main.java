@@ -1,5 +1,6 @@
 package org.com;
 
+import org.com.exceptions.UserLoginException;
 import org.com.repos.OrderRepo;
 import org.com.repos.ProductRepo;
 import org.com.repos.UserRepo;
@@ -9,8 +10,6 @@ import org.com.service.ProductService;
 import org.com.service.UserService;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Примеры возможностей программы:
@@ -26,20 +25,15 @@ import java.util.Random;
  */
 public class Main { // StartShop
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
-
-//        register user
-//        String name = "Achilles";
-//        String phoneNumber = "89997776655";
-//        String email = "allfreetome@gmail.com";
-//        String password = "qwerty123";
-
-//        return new User();
+        System.out.print("""
+                    <*Shop is Open*>
+                """);
 
         // Репозитории
         UserRepo userRepo = new InMemoryUserRepo();
         OrderRepo orderRepo = new InMemoryOrderRepo();
         ProductRepo productRepo = new InMemoryProductRepo();
+        JsonProductLoader jsonProductLoader = new JsonProductLoader();
 
         // Сервисы
         CartService cartService = new Cart();
@@ -47,80 +41,60 @@ public class Main { // StartShop
         ProductService productService = new ProductServiceImpl(productRepo);
         OrderService orderService = new OrderServiceImpl(orderRepo, userRepo, productRepo);
 
+        // загружает весь каталог товаров в память через ссылку на метод
+        jsonProductLoader.loadProducts().forEach(productRepo::save);
 
-/** // Товары
-        Product greenApple = new Product(31L,
-                "Green Apple",
-                CategoryOfProd.FRUIT,
-                "Eden",
-                BigDecimal.valueOf(9999.99),
-                List.of("green", "apple", "eden", "divine"));
-        productRepo.save(greenApple);
+        // register new user
+        try {
+            userService.registerUser("Vigor", "89031115599", "levelvogor@hotmail.com", "Qwerty123@");
+        } catch (Exception e) {
+            e.fillInStackTrace();
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
 
-        Product beefJerky = new Product(33L,
-                "Beef jerk-off",
-                CategoryOfProd.MEAT,
-                "Jerk-Off Beef",
-                BigDecimal.valueOf(199.99),
-                List.of("beef", "jerky", "jerk-off", "jerky"));
-        productRepo.save(beefJerky);
+        // login user
+        try {
+            userService.login("levelvogor@hotmail.com", "Qwerty123@");
+        } catch (UserLoginException e) {
+            e.fillInStackTrace();
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
 
-        Product blackCoffee = new Product(39L,
-                "Black arse Coffee",
-                CategoryOfProd.BEVERAGES,
-                "Negro de Drink",
-                BigDecimal.valueOf(99.99),
-                List.of("coffee", "black", "black coffee", "negro", "black drink"));
-        productRepo.save(blackCoffee);
+        // filling cart
+        cartService.addItem(productRepo.findById(31L), 9);
+        cartService.addItem(productRepo.findById(333L), 2);
+        cartService.addItem(productRepo.findById(34L), 1);
+        cartService.addItem(productRepo.findById(99L), 3);
+        cartService.updateQuantity(productRepo.findById(99L), 5);
 
-        Product cowMilk = new Product(93L,
-                "Fresh Tit Cow Milk",
-                CategoryOfProd.FRESH_PRODUCE,
-                "TityCowy",
-                BigDecimal.valueOf(399.99),
-                List.of("cow", "milk", "cow milk", "tits milk", "fresh milk"));
-        productRepo.save(cowMilk);
+        // order product list
+        System.out.print("""
+                
+                Order list:
+                """);
+        for (CartItem item : cartService.getItem()) {
+            System.out.printf("""
+                    %s | %s QTY * %s pc/pc -> for %s
+                    """, item.getProduct().getProductName(),
+                    item.getQuantity(),
+                    item.getProduct().getProductPrice(),
+                    item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                    );
+        }
+        System.out.printf("""
+                Total cart price is: %s
+                """, cartService.getTotalPrice());
 
-        Product greenTea = new Product(38L,
-                "Green Mint Tea",
-                CategoryOfProd.BEVERAGES,
-                "Green Mountain",
-                BigDecimal.valueOf(599.99),
-                List.of("tea", "green", "green tea", "mint", "mountain", "correct drink"));
-        productRepo.save(greenTea);
+        // creating order
+        Order order = orderService.createOrder(userRepo.findByEmail("levelvogor@hotmail.com").get(),
+                "Ordinary street, obvious district",
+                cartService);
 
-        Product octopus = new Product(333L,
-                "Fresh Octopus",
-                CategoryOfProd.SEAFOOD,
-                "OctoPussy",
-                BigDecimal.valueOf(99.99),
-                List.of("octopus", "fresh", "sea food"));
-        productRepo.save(octopus);
-
-        Product yogurtVanilla = new Product(32L,
-                "Yogurt Vanilla",
-                CategoryOfProd.FRESH_PRODUCE,
-                "Vanilla Puddle",
-                BigDecimal.valueOf(999.99),
-                List.of("vogue yogurt", "yogurt", "vanilla", "vanilla puddle"));
-        productRepo.save(yogurtVanilla);
-
-        Product redTomato = new Product(99L,
-                "Red Tomato",
-                CategoryOfProd.VEGETABLE,
-                "Auto-Tomato",
-                BigDecimal.valueOf(99.99),
-                List.of("auto tomato", "tomato", "red tomato"));
-        productRepo.save(redTomato);
-
-        Product turkeyMeat = new Product(34L,
-                "Turkey Meat",
-                CategoryOfProd.MEAT,
-                "Turkey from Turkey",
-                BigDecimal.valueOf(499.99),
-                List.of("meat", "turkey meat", "turkish meat", "turkish bird"));
-        productRepo.save(turkeyMeat);
-        */
+        if (cartService.getItem().isEmpty()){
+            System.out.println("Cart is empty");
+        }
 
 /**
         DiscountCalculator discountCalculator = new PercentageDiscountCalculator();
