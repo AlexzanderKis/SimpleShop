@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// TODO rename class to CartServiceImpl.java
 // CartServiceImpl or Cart — это временное состояние:
 // пользователь добавляет/удаляет товары,
 // меняет количество,
