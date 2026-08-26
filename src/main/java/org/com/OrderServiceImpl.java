@@ -38,13 +38,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
         if (cartService.getItem().isEmpty()) {
-            throw new IllegalStateException("Can not proceed order. Your cart is empty!");
+            throw new IllegalStateException("?Can not proceed order. Your cart is empty!?");
         }
+        List<CartItem> productListCopy = List.copyOf(cartService.getItem()); // Сохраняет товары и их количество через объекты CartItem. Делает снимок данных, вызов cartService.clearCart() не стирает состав оформленного заказа.
 //        Long userId = Long.valueOf(user.getUserId());
         OrderStatus orderStatus = OrderStatus.NEW_ORDER;
         Order order = new Order(user,
                 UUID.randomUUID().toString().substring(0,23).toUpperCase(Locale.ROOT), // создание рандомного ID заказа 24 символа
-                cartService.getItem().stream().map(CartItem::getProduct).toList(),
+                productListCopy,
                 cartService.getTotalPrice(),
                 cartService.getTotalPrice(), // discount price
                 orderStatus,
@@ -52,14 +53,19 @@ public class OrderServiceImpl implements OrderService {
         );
         orderRepo.save(order);
         System.out.printf("""
-                        
+                        ????????????????????????
+                                *ORDER CHECK*
                         Order created: %s
-                        Ordered by user: %s
+                        Order status: %s
+                        Ordered by user: %s | %s
                         Total order price: %s
                         Total order %% price: %s
+                        ????????????????????????
                         """,
                 order.getOrderID(),
+                order.getOrderCurrentStatus(),
                 order.getUser().getUserId(),
+                order.getUser().getUserName(),
                 order.getOrderTotalPrice(),
                 order.getOrderTotalPriceWithDiscount());
 
@@ -107,11 +113,11 @@ public class OrderServiceImpl implements OrderService {
 //        orderRepo.save(orderRepeat);
 //        return orderRepeat;
 
-        for (Product product : previousOrder.getOrderProductList()){
+        for (CartItem item : previousOrder.getOrderProductList()){
             // Передавая 1, мы добавляем каждую единицу товара из списка,
             // а метод addItem внутри корзины сам объединит одинаковые товары и увеличит их количество
             int repeatProductQuantity = 1;
-            cartService.addItem(product, repeatProductQuantity);
+            cartService.addItem(item.getProduct(), repeatProductQuantity);
         }
         return cartService;
     }
