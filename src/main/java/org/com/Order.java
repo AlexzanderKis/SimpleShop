@@ -6,7 +6,7 @@ import java.util.List;
 public class Order {
     private final User user;
     private final String orderID;
-    private final List<Product> orderProductList;
+    private final List<CartItem> orderProductList;
     private final BigDecimal orderTotalPrice;
     private final BigDecimal orderTotalPriceWithDiscount;
     private final OrderStatus orderCurrentStatus;
@@ -14,7 +14,7 @@ public class Order {
 
     public Order(User user,
                  String orderID,
-                 List<Product> orderProductList,
+                 List<CartItem> orderProductList,
                  BigDecimal orderTotalPrice,
                  BigDecimal orderTotalPriceWithDiscount,
                  OrderStatus orderCurrentStatus,
@@ -36,7 +36,7 @@ public class Order {
         return orderID;
     }
 
-    public List<Product> getOrderProductList() {
+    public List<CartItem> getOrderProductList() {
         return orderProductList;
     }
 
