@@ -2,6 +2,7 @@ package org.com;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Product {
     private Long productId;
@@ -71,5 +72,16 @@ public class Product {
 
     public void setProductKeywords(List<String> productKeywords) {
         this.productKeywords = productKeywords;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID %s [%s] | %s, Brand: %s - %s",
+                productId,
+                productCategory,
+                productName,
+                productBrand,
+                productPrice);
+//        return "ID " + productId + " | " + productCategory + " | " + productName + ", Brand: " + productBrand + " - " + productPrice;
     }
 }
