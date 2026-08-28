@@ -32,33 +32,36 @@ public class UserServiceImpl implements UserService {
     public void registerUser(String name, String phoneNumber, String email, String password)
             throws Exception {
 
-        User user = new User(UUID.randomUUID().toString().substring(0,12).toUpperCase(Locale.ROOT),
+        User user = new User(UUID.randomUUID().toString().substring(0, 12).toUpperCase(Locale.ROOT),
                 name,
                 email,
                 phoneNumber);
 
+// PH NUM VALIDATION
+        if (validateNumber(phoneNumber)) {
+            if (userRepo.findByPhoneNumber(phoneNumber).isPresent()) {
+                throw new PhoneNumberAlreadyExistException(); // "?PhoneNumberAlreadyExist?"
+            }
+        } else {
+            throw new InvalidPhoneNumberException(); // phone num incorrect "?IncorrectPhoneNumber?"
+        }
+
+// EMAIL VALIDATION
         if (EmailValidator.getInstance().isValid(email)) {
             if (userRepo.findByEmail(email).isPresent()) {
                 throw new MailAlreadyExistException("?EmailAlreadyExist?");
             }
         } else {
-            throw new InvalidEmailException("?InvalidEmail?"); // "email incorrect"
+            throw new InvalidEmailException(); // "email incorrect" "?InvalidEmail?"
         }
 
-        if (validateNumber(phoneNumber)) {
-            if (userRepo.findByPhoneNumber(phoneNumber).isPresent()) {
-                throw new PhoneNumberAlreadyExistException("?PhoneNumberAlreadyExist?");
-            }
-        } else {
-            throw new InvalidPhoneNumberException("?IncorrectPhoneNumber?"); // phone num incorrect
-        }
-
+// PASSWORD VALIDATION
         if (validatePassword(password)) {
             user.setUserPassword(PasswordEncoder.hashPassword(password));
             userRepo.save(user);
             System.out.println("?UserSaved?");
         } else {
-            throw new InvalidPasswordException("?PasswordIncorrect?"); // password incorrect
+            throw new InvalidPasswordException(); // password incorrect "?PasswordIncorrect?"
         }
         System.out.println("?Registration successfully done?");
     }
