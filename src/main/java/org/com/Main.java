@@ -19,6 +19,7 @@ import org.com.tools.ProductListParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
@@ -195,6 +196,7 @@ public class Main { // StartShop
                     """);
             List<Product> productList = productService.getAllProduct();
             productList.forEach(System.out::println);
+            System.out.println();
 //            for (Product p : productList) {
 
 //                System.out.println(p);
@@ -209,9 +211,69 @@ public class Main { // StartShop
 //                        p.getProductPrice());
 //            }
         }
-
-        while (true){
-
+// меню каталога и фильтрации
+        while (true) {
+            System.out.print("""
+                    1. Составить продуктовую корзину (Начать покупки)
+                    2. Фильтрация товаров по ключевым словам
+                    3. Фильтрация по ценам
+                    0. Выход
+                    """);
+            int select = userInput.nextInt();
+            userInput.nextLine();
+            switch (select) {
+                case 1:
+                    System.out.print("""
+                            Добавление продукта в корзину: 'ID продукта' | 'количество'
+                            Изменение количества продукта: 'ID продукта' | 'количество'
+                            Удаление из корзины: 'ID продукта' | 'количество = 0'
+                            Вывести список товаров в корзине: 1
+                            Закончить составление корзины: 0
+                            """);
+                    while (true) {
+                        long prodID = userInput.nextLong();
+                        if (prodID == 0) {
+                            break;
+                        }
+                        if (prodID == 1) {
+                            System.out.print(cartService);
+                            continue;
+                        }
+                        int qty = userInput.nextInt();
+                        if (qty == 0) {
+                            cartService.removeItem(productService.getProductById(prodID).get());
+                            System.out.printf("""
+                                    Item %s removed from cart
+                                    """, productRepo.findById(prodID).getProductName());
+                        } else {
+                            System.out.printf("""
+                                    Item %s in %s QTY added to cart
+                                    """, productRepo.findById(prodID).getProductName(), qty);
+                          //  cartService.updateQuantity(productService.getProductById(prodID).get(), qty);
+                        }
+                        cartService.addItem(productRepo.findById(prodID), qty);
+                    }
+                    break;
+                case 2:
+                    // TODO -> Фильтрация товаров по ключевым словам
+                    break;
+                case 3:
+                    System.out.println("Type min and max price: (e.g. 123 4567)");
+                    int min = userInput.nextInt(), max = userInput.nextInt();
+                    System.out.println("Filtered by price: ");
+                    List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
+                    productList.forEach(System.out::println);
+                    break;
+                case 0:
+                    System.out.println("BYE");
+                    break;
+                default:
+                    System.out.println("?NoCommand?");
+                    break;
+            }
+            if (select == 0) {
+                break;
+            }
         }
 
 /** old test main
