@@ -31,44 +31,48 @@ public class Cart implements CartService {
         for (CartItem item : productsInCart) {
             if (item.getProduct().equals(product)) {
                 //Если товар найден, мы обновляем его количество и сразу выходим из метода.
-                item.setQuantity(item.getQuantity() + quantity);
-                System.out.printf("""
-                                ?Item's %s quantity changed to %s?
-                                """
-                        ,product.getProductName(),quantity);
+//                if (quantity < 0) {
+                    item.setQuantity(item.getQuantity() + quantity);
+                    System.out.printf("""
+                                    ?Item's %s quantity changed to %s?
+                                    """
+                            , product.getProductName(), quantity);
+//                }
                 return;
             }
         }
         //Если цикл прошёл по всей корзине и ничего не нашёл, создаётся и добавляется новая позиция CartItem.
         CartItem cartItem = new CartItem(product, quantity);
         productsInCart.add(cartItem);
-        System.out.printf("""
-                        ?Item %s in quantity of %s added to cart?
-                        """
-                , product.getProductName(), quantity);
+        if (quantity <= 0) {
+            System.out.printf("""
+                            ?Item %s in quantity of %s added to cart?
+                            """
+                    , product.getProductName(), quantity);
+        }
     }
 
     @Override
     public void removeItem(Product product) {
 /** ConcurrentModificationException might be
-        for (CartItem item : productsInCart) {
-            if (item.getProduct().equals(product)) {
-                productsInCart.remove(item);
-                return;
-            }
-*/
+ for (CartItem item : productsInCart) {
+ if (item.getProduct().equals(product)) {
+ productsInCart.remove(item);
+ return;
+ }
+ */
         productsInCart.removeIf(cartItem -> cartItem.getProduct().equals(product));
     }
 
     @Override
     public void updateQuantity(Product product, int quantity) {
         // Если количество product = 0, то removeItem() из корзины
-        if (quantity <= 0) {
+        if (quantity == 0) {
             removeItem(product);
             System.out.printf("""
-                                ?Item %s removed from cart?
-                                """
-                    ,product.getProductName());
+                            ?Item %s removed from cart?
+                            """
+                    , product.getProductName());
             return;
         }
         // Если есть такой product, то setQuantity
@@ -78,7 +82,7 @@ public class Cart implements CartService {
                 System.out.printf("""
                                 ?Item's %s quantity changed to %s?
                                 """
-                        ,product.getProductName(),quantity);
+                        , product.getProductName(), item.getQuantity());
                 return;
             }
         }
@@ -111,6 +115,27 @@ public class Cart implements CartService {
 //                %s
 //                """,cartStr);
         return Collections.unmodifiableList(productsInCart); //  creates an unmodifiable view. It is not immutable because it changes if you're changing the original, backing collection
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (CartItem item : productsInCart){
+            if (item.getQuantity() == 0){
+                continue;
+            }
+            stringBuilder.append(String.format("""
+                    ID %s [%s] | %s, Brand: %s - %s pc/pc * %s QTY = %s
+                    """,
+                    item.getProduct().getProductId(),
+                    item.getProduct().getProductCategory(),
+                    item.getProduct().getProductName(),
+                    item.getProduct().getProductBrand(),
+                    item.getProduct().getProductPrice(),
+                    item.getQuantity(),
+                    item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))));
+        }
+        return stringBuilder.toString();
     }
 
     @Override
