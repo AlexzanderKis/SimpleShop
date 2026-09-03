@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 /**
@@ -100,16 +101,18 @@ public class Main { // StartShop
                 case 2:
                     System.out.println("Registration");
                     while (true) {
-                        Scanner input = new Scanner(userRegistrationFile);
+                        Scanner input = new Scanner(userRegistrationFile); // for file usage (remove for user input usage)
 // NAME
                         System.out.println("Type name: ");
-                        String userName = input.nextLine();
+                        String userName = input.nextLine(); // for file usage (remove for user input usage)
+//                        String userName = userInput.nextLine(); // for user input
 // PH NUM
                         System.out.println("Type phone number: ");
                         String userPhNum = "";
                         while (true) {
                             try {
-                                String userPhNumCheck = input.nextLine();
+                                String userPhNumCheck = input.nextLine(); // for file
+//                                String userPhNumCheck = userInput.nextLine(); // for user input
                                 if (!validateNumber(userPhNumCheck)) {
                                     continue;
                                 }
@@ -124,7 +127,8 @@ public class Main { // StartShop
                         String userEmail = "";
                         while (true) {
                             try {
-                                String userEmailCheck = input.nextLine();
+                                String userEmailCheck = input.nextLine(); // for file
+//                                String userEmailCheck = userInput.nextLine(); // for user input
                                 if (!EmailValidator.getInstance().isValid(userEmailCheck)) {
                                     System.out.print("""
                                             ?EmailIncorrect?
@@ -148,7 +152,8 @@ public class Main { // StartShop
                         String userPassword = "";
                         while (true) {
                             try {
-                                String userPasswordCheck = input.nextLine();
+                                String userPasswordCheck = input.nextLine(); // for file
+//                                String userPasswordCheck = userInput.nextLine(); // for user input
                                 if (!validatePassword(userPasswordCheck)) {
                                     continue;
                                 }
@@ -232,41 +237,77 @@ public class Main { // StartShop
                             """);
                     while (true) {
                         long prodID = userInput.nextLong();
+
+                        // Закончить составление корзины
                         if (prodID == 0) {
                             break;
                         }
+
+                        // Вывести список товаров в корзине
                         if (prodID == 1) {
                             System.out.print(cartService);
                             continue;
                         }
+
                         int qty = userInput.nextInt();
-                        if (qty == 0) {
-                            cartService.removeItem(productService.getProductById(prodID).get());
+
+                        // Заглядываем в корзину и ищем товар
+                        Optional<Product> productOptional = Optional.ofNullable(productRepo.findById(prodID));
+                        Product product = productOptional.orElse(null);
+                        boolean prodExistInCart = cartService.getItem()
+                                .stream()
+                                .anyMatch(cartItem -> cartItem.getProduct().equals(product));
+
+                        // Если товар есть в корзине и кол-во > 0, то обновляем количество++
+                        if (prodExistInCart && qty > 0) {
+                            cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
+                            System.out.printf("""
+                                    Item's %s quantity increased by %s QTY
+                                    """, productRepo.findById(prodID).getProductName(), qty);
+
+                            // Если товар есть в корзине и кол-во < 0 обновляем количество--
+                        } else if (prodExistInCart && qty < 0) {
+                            cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
+                            System.out.printf("""
+                                    Item's %s quantity decreased by %s
+                                    """, productRepo.findById(prodID).getProductName(), qty);
+
+                            // Удаление товара из корзины если кол-во == 0
+                        } else if (qty == 0) {
+                            cartService.removeItem(productService.getProductById(prodID).orElse(null));
                             System.out.printf("""
                                     Item %s removed from cart
                                     """, productRepo.findById(prodID).getProductName());
+
+                            // Если товара нет в корзине - добавляем товар и кол-во
                         } else {
+                            cartService.addItem(productRepo.findById(prodID), qty);
                             System.out.printf("""
                                     Item %s in %s QTY added to cart
                                     """, productRepo.findById(prodID).getProductName(), qty);
-                          //  cartService.updateQuantity(productService.getProductById(prodID).get(), qty);
                         }
-                        cartService.addItem(productRepo.findById(prodID), qty);
                     }
                     break;
+
                 case 2:
                     // TODO -> Фильтрация товаров по ключевым словам
                     break;
+
                 case 3:
                     System.out.println("Type min and max price: (e.g. 123 4567)");
                     int min = userInput.nextInt(), max = userInput.nextInt();
-                    System.out.println("Filtered by price: ");
+                    System.out.printf("""
+                            Filtered by price from %d to %d:
+                            """, min,max);
                     List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
                     productList.forEach(System.out::println);
+                    System.out.println();
                     break;
+
                 case 0:
                     System.out.println("BYE");
                     break;
+
                 default:
                     System.out.println("?NoCommand?");
                     break;
