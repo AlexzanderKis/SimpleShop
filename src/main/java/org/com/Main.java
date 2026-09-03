@@ -246,6 +246,12 @@ public class Main { // StartShop
                         // Вывести список товаров в корзине
                         if (prodID == 1) {
                             System.out.print(cartService);
+                            System.out.print("""
+                                    
+                                    Если готовы оформить заказ нажмите: Y/y
+                                    Для составления корзины продолжайте вводить: 'ID продукта' | 'количество'
+                                    Закончить составление корзины: 0
+                                    """);
                             continue;
                         }
 
@@ -257,6 +263,14 @@ public class Main { // StartShop
                         boolean prodExistInCart = cartService.getItem()
                                 .stream()
                                 .anyMatch(cartItem -> cartItem.getProduct().equals(product));
+
+                        // Если ID товара не существует
+                        if (productService.getProductById(prodID).isEmpty()){
+                            System.out.printf("""
+                                    Item ID %d not exist
+                                    """, prodID);
+                            continue;
+                        }
 
                         // Если товар есть в корзине и кол-во > 0, то обновляем количество++
                         if (prodExistInCart && qty > 0) {
