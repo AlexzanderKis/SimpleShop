@@ -85,4 +85,28 @@ public class Order {
     public void setOrderDeliveryAddress(String orderNewDeliveryAddress) {
         this.orderDeliveryAddress = orderNewDeliveryAddress;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        System.out.printf("""
+                OrderID: %s
+                Current status: %s
+                Delivery address: %s
+                Total price: %s
+                """, orderID, orderCurrentStatus, orderDeliveryAddress, orderTotalPrice);
+        for (CartItem item : orderProductList) {
+            if (item.getQuantity() == 0) {
+                continue;
+            }
+            stringBuilder.append(String.format("""
+                            %s | %s - %s QTY for %s
+                            """,
+                    item.getProduct().getProductId(),
+                    item.getProduct().getProductName(),
+                    item.getQuantity(),
+                    item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))));
+        }
+        return stringBuilder.toString();
+    }
 }
