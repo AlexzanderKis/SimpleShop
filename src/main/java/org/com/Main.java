@@ -308,16 +308,52 @@ public class Main { // StartShop
                     break;
 
                 case 3:
-                    System.out.println("Type min and max price: (e.g. 123 4567)");
-                    int min = userInput.nextInt(), max = userInput.nextInt();
-                    System.out.printf("""
-                            Filtered by price from %d to %d:
-                            """, min,max);
-                    List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
-                    productList.forEach(System.out::println);
-                    System.out.println();
+                    // Отменить заказ
+                    System.out.print("""
+                            //                            Under construction
+                            """);
+//                    System.out.println("Введите email для поиска заказов");
+//                    String email = userInput.nextLine();
+//                    if (!email.isEmpty()) {
+//                        orderService.cancelOrder(cartService);
+//                    } else {
+//                        System.out.println("no such email");
+//                        break;
+//                    }
                     break;
 
+                case 4:
+                    // Список заказов
+                    assert currentUser != null;
+//                    orderRepo.findByUserId(currentUser.getUserId()).forEach(System.out::println);
+                    List<Order> userOrders = orderRepo.findByUserId(currentUser.getUserId());
+                    if (userOrders.isEmpty()) {
+                        System.out.println("Нет заказов.");
+                    } else {
+                        System.out.println("<<<Ваши заказы>>>");
+                        for (int i = 0; i < userOrders.size(); i++) {
+                            Order order = userOrders.get(i);
+                            System.out.printf("""
+                                    Заказ №%d
+                                    """, i + 1);
+                            System.out.println(order);
+                            System.out.println("-------------------------");
+                        }
+                    }
+                    break;
+/** old case
+ case 3:
+ // Фильтрация по ценам
+ System.out.println("Type min and max price: (e.g. 123 4567)");
+ int min = userInput.nextInt(), max = userInput.nextInt();
+ System.out.printf("""
+ Filtered by price from %d to %d:
+ """, min, max);
+ List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
+ productList.forEach(System.out::println);
+ System.out.println();
+ break;
+ */
                 case 0:
                     System.out.println("BYE");
                     break;
