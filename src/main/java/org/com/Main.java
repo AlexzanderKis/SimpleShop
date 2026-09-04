@@ -427,4 +427,36 @@ public class Main { // StartShop
 */
 
     }
+
+    private static void orderCreationStation(User currentUser,
+                                             CartService cartService,
+                                             OrderService orderService,
+                                             Scanner userInput) {
+        // проверка авторизации
+        if (currentUser == null) {
+            System.out.println("No User");
+            return;
+        }
+        // проверка корзины
+        if (cartService.getItem().isEmpty()) {
+            System.out.println("Корзина пуста");
+            return;
+        }
+
+        System.out.print("""
+                <Order Creation Station>
+                """);
+        System.out.print("""
+                Введите адрес доставки:
+                """);
+        // сброс буфера
+//        userInput.nextLine();
+        String deliveryAddress = userInput.nextLine().trim();
+        if (deliveryAddress.isEmpty()) {
+            System.out.println("No address - no order");
+            return;
+        }
+        orderService.createOrder(currentUser, deliveryAddress, cartService);
+        System.out.println("DONE");
+    }
 }
