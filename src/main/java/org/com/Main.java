@@ -304,7 +304,27 @@ public class Main { // StartShop
                     break;
 
                 case 2:
-                    // TODO -> Фильтрация товаров по ключевым словам
+                    // Оформление повторного заказа
+// TODO - сохранение/исправление адреса доставки
+                    orderService.repeatOrder(orderRepo.findByUser(currentUser).getLast(), cartService);
+                    System.out.printf("""
+                            Вы повторили заказ:
+                            %s
+                            """, cartService);
+                    System.out.print("""
+                            Оформить заказ? Y/N
+                            """);
+//                    userInput.nextLine(); // сбросить строку
+                    String in = userInput.nextLine();
+                    if (in.equalsIgnoreCase("y")) {
+                        orderCreationStation(currentUser, cartService, orderService, userInput);
+                        System.out.println("Заказ оформлен");
+                    } else {
+                        System.out.print("""
+                                Заказ сохранён, как "неоформленный"
+                                """);
+                        return;
+                    }
                     break;
 
                 case 3:
