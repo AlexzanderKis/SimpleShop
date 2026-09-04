@@ -53,21 +53,23 @@ public class OrderServiceImpl implements OrderService {
         );
         orderRepo.save(order);
         System.out.printf("""
-                        ????????????????????????
+                        ??????????????????????????????????????
                                 *ORDER CHECK*
                         Order created: %s
                         Order status: %s
                         Ordered by user: %s | %s
                         Total order price: %s
                         Total order %% price: %s
-                        ????????????????????????
+                        Delivery address: %s
+                        ??????????????????????????????????????
                         """,
                 order.getOrderID(),
                 order.getOrderCurrentStatus(),
                 order.getUser().getUserId(),
                 order.getUser().getUserName(),
                 order.getOrderTotalPrice(),
-                order.getOrderTotalPriceWithDiscount());
+                order.getOrderTotalPriceWithDiscount(),
+                order.getOrderDeliveryAddress());
 
         // clear the cart
         cartService.clearCart();
@@ -117,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
             // Передавая 1, мы добавляем каждую единицу товара из списка,
             // а метод addItem внутри корзины сам объединит одинаковые товары и увеличит их количество
             int repeatProductQuantity = 1;
-            cartService.addItem(item.getProduct(), repeatProductQuantity);
+            cartService.addItem(item.getProduct(), item.getQuantity());
         }
         return cartService;
     }
