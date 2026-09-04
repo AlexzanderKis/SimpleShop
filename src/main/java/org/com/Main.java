@@ -56,9 +56,6 @@ public class Main { // StartShop
 
         File userRegistrationFile = new File("userInputForRegistration.txt"); // file with user registration info
         Scanner userInput = new Scanner(System.in);
-        //1. Вход
-        //2. Регистрация
-        //0. Выход
 
         User currentUser = null;
         while (currentUser == null) {
@@ -216,13 +213,14 @@ public class Main { // StartShop
 //                        p.getProductPrice());
 //            }
         }
-// меню каталога и фильтрации
+// меню каталога, фильтрации, оформление заказа
         while (true) {
             System.out.print("""
-                    1. Составить продуктовую корзину (Начать покупки)
-                    2. Фильтрация товаров по ключевым словам
-                    3. Фильтрация по ценам
-                    0. Выход
+                    1. Составить продуктовую корзину (Начать покупки).
+                    2. Оформить повторный заказ.
+                    3. Отменить заказ.
+                    4. Список заказов.
+                    0. Выход.
                     """);
             int select = userInput.nextInt();
             userInput.nextLine();
@@ -232,9 +230,13 @@ public class Main { // StartShop
                             Добавление продукта в корзину: 'ID продукта' | 'количество'
                             Изменение количества продукта: 'ID продукта' | 'количество'
                             Удаление из корзины: 'ID продукта' | 'количество = 0'
-                            Вывести список товаров в корзине: 1
-                            Закончить составление корзины: 0
+                            1. Вывести список товаров в корзине.
+                            2. Фильтрация товаров по ключевым словам.
+                            3. Фильтрация по ценам.
+                            4. Список доступных к покупке товаров.
+                            0. Закончить составление корзины.
                             """);
+
                     while (true) {
                         long prodID = userInput.nextLong();
 
@@ -244,14 +246,90 @@ public class Main { // StartShop
                         }
 
                         // Вывести список товаров в корзине
-                        if (prodID == 1) {
+                        if (prodID == 1 && !cartService.getItem().isEmpty()) {
                             System.out.print(cartService);
+                            System.out.printf("""
+                                    Total cart price: %s
+                                    """,cartService.getTotalPrice());
                             System.out.print("""
                                     
-                                    Если готовы оформить заказ нажмите: Y/y
-                                    Для составления корзины продолжайте вводить: 'ID продукта' | 'количество'
-                                    Закончить составление корзины: 0
+                                    Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
+                                    2. Фильтрация товаров по ключевым словам.
+                                    3. Фильтрация по ценам.
+                                    4. Список доступных к покупке товаров.
+                                    5. Оформить заказ
+                                    6. Очистить корзину
+                                    0. Back
                                     """);
+                            continue;
+                        } else if (prodID == 1 && cartService.getItem().isEmpty()) {
+                            System.out.println("Корзина пуста");
+                            continue;
+                        } else if (prodID == 6) {
+                            cartService.clearCart();
+                            System.out.println("Корзина очищена");
+                            continue;
+                        }
+
+// TODO -> Фильтрация товаров по ключевым словам
+                        // Фильтрация товаров по ключевым словам
+                        if (prodID == 2) {
+                            System.out.print("""
+                                    //                                    TODO: keyword filter
+                                    """);
+                            continue;
+                        }
+
+                        // Фильтрация товаров по ценам
+                        if (prodID == 3) {
+                            System.out.println("Type min and max price: (e.g. 123 4567)");
+                            int min = userInput.nextInt(), max = userInput.nextInt();
+                            if (min > 0 && max > min) {
+                                System.out.printf("""
+                                        Filtered by price from %d to %d:
+                                        """, min, max);
+                                List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
+                                productList.forEach(System.out::println);
+                                System.out.println();
+                                continue;
+                            }
+                        }
+
+                        // Available Products List
+                        if (prodID == 4) {
+                            System.out.print("""
+                                    Available Products List:
+                                    """);
+                            List<Product> productList = productService.getAllProduct();
+                            productList.forEach(System.out::println);
+                            System.out.println();
+                            continue;
+                        }
+
+                        // Оформление заказа
+                        if (prodID == 5 && !cartService.getItem().isEmpty()) {
+                            userInput.nextLine(); // сбросить строку
+                            orderCreationStation(currentUser, cartService, orderService, userInput);
+/*
+                            userInput.nextLine(); // сбросить строку
+                            System.out.println("Order Creation Station");
+                            System.out.println("Type you address:");
+                            String deliveryAddress = userInput.nextLine();
+                            if (deliveryAddress.isEmpty()) {
+                                System.out.println("No address - no order.");
+                                continue;
+                            } else {
+                                orderService.createOrder(currentUser, deliveryAddress, cartService);
+                            }
+ */
+                            break;
+                        }
+
+                        // Если ID товара не существует
+                        if (productService.getProductById(prodID).isEmpty()) {
+                            System.out.printf("""
+                                    Item ID %d not exist
+                                    """, prodID);
                             continue;
                         }
 
@@ -263,14 +341,6 @@ public class Main { // StartShop
                         boolean prodExistInCart = cartService.getItem()
                                 .stream()
                                 .anyMatch(cartItem -> cartItem.getProduct().equals(product));
-
-                        // Если ID товара не существует
-                        if (productService.getProductById(prodID).isEmpty()){
-                            System.out.printf("""
-                                    Item ID %d not exist
-                                    """, prodID);
-                            continue;
-                        }
 
                         // Если товар есть в корзине и кол-во > 0, то обновляем количество++
                         if (prodExistInCart && qty > 0) {
@@ -386,6 +456,16 @@ public class Main { // StartShop
                 break;
             }
         }
+
+//        while (true) {
+//            if (!cartService.getItem().isEmpty() && userInput.nextLine().equalsIgnoreCase("Y")) {
+//                System.out.print("""
+//                        order creation here
+//                        """);
+//            } else {
+//                System.out.println("NO-NO. Cart is empty");
+//            }
+//        }
 
 /** old test main
         // register new user
