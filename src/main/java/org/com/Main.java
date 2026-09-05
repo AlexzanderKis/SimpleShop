@@ -397,6 +397,36 @@ public class Main { // StartShop
                     }
                     break;
 
+// Отменить заказ
+                case 3:
+                    List<Order> orderList = orderService.getOrderByUser(currentUser);
+                    printOrderList(orderList);
+                    if (orderList.isEmpty()) {
+                        continue;
+                    }
+                    System.out.println("Введите номер заказа для отмены (Enter для возврата):");
+                    String userIN = userInput.nextLine();
+                    try {
+                        int index = Integer.parseInt(userIN) - 1;
+                        orderService.cancelOrder(orderList.get(index));
+                        System.out.printf("""
+                                    Заказ #%s отменён.
+                                    """, userIN);
+                    } catch (IllegalStateException e) {
+                        System.out.println(e.getMessage());
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Заказа с таким номером нет.");
+                    } catch (NumberFormatException e) {
+                        // пустой ввод – просто возврат
+                    }
+                    break;
+
+// Список заказов пользователя по запросу
+                case 4:
+                    List<Order> userOrders = orderService.getOrderByUser(currentUser);
+                    printOrderList(userOrders);
+                    break;
+/*
                 case 3:
                     // Отменить заказ
                     System.out.print("""
