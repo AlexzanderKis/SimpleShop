@@ -274,6 +274,19 @@ public class Main { // StartShop
 // TODO -> Фильтрация товаров по ключевым словам
                         // Фильтрация товаров по ключевым словам
                         if (prodID == 2) {
+                            System.out.println("Type keyword (e.g. 'beverage', 'apple':");
+                            userInput.nextLine();
+                            String userKeyword = userInput.nextLine();
+                            System.out.printf("""
+                                    Продукты по слову: %s
+                                    """, userKeyword);
+                            List<Product> productList = productService.searchProductByKeyword(userKeyword);
+                            if (productList.isEmpty()) {
+                                System.out.println("none");
+                            } else {
+                                productList.forEach(System.out::println);
+                            }
+//                            productService.searchProductByKeyword(userKeyword).forEach(System.out::println);
                             System.out.print("""
                                     //                                    TODO: keyword filter
                                     """);
