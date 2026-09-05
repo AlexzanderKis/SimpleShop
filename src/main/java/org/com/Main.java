@@ -26,12 +26,12 @@ import java.util.Scanner;
 
 /**
  * Примеры возможностей программы:
- *
+ * ------------------------------
  * Вывод доступных для покупки товаров
  * Фильтрация товаров по ключевым словам, ценам, производителям
  * Составление продуктовой корзины пользователя
+ * Отмена заказа, повтор заказа
  * Трекинг заказа в системе доставки
- * Возврат заказа, повтор заказа
  */
 public class Main { // StartShop
     public static void main(String[] args) throws Exception {
@@ -39,19 +39,19 @@ public class Main { // StartShop
                     <*Shop is Open*>
                 """);
 
-        // Репозитории
+// Репозитории
         UserRepo userRepo = new InMemoryUserRepo();
         OrderRepo orderRepo = new InMemoryOrderRepo();
         ProductRepo productRepo = new InMemoryProductRepo();
         JsonProductLoader jsonProductLoader = new JsonProductLoader();
 
-        // Сервисы
+// Сервисы
         CartService cartService = new Cart();
         UserService userService = new UserServiceImpl(userRepo);
         ProductService productService = new ProductServiceImpl(productRepo);
         OrderService orderService = new OrderServiceImpl(orderRepo, userRepo, productRepo);
 
-        // загружает весь каталог товаров в память через ссылку на метод
+// загружает весь каталог товаров в память через ссылку на метод
         jsonProductLoader.loadProducts().forEach(productRepo::save);
 
         File userRegistrationFile = new File("userInputForRegistration.txt"); // file with user registration info
@@ -200,9 +200,7 @@ public class Main { // StartShop
             productList.forEach(System.out::println);
             System.out.println();
 //            for (Product p : productList) {
-
 //                System.out.println(p);
-
 //                System.out.printf("""
 //                                ID %s [%s] | %s, Brand: %s - %s
 //                                """,                            // %.2f%n for price
@@ -227,9 +225,9 @@ public class Main { // StartShop
             switch (select) {
                 case 1:
                     System.out.print("""
-                            Добавление продукта в корзину: 'ID продукта' | 'количество'
-                            Изменение количества продукта: 'ID продукта' | 'количество'
-                            Удаление из корзины: 'ID продукта' | 'количество = 0'
+                                * Добавление продукта в корзину: 'ID продукта' | 'количество'
+                                * Изменение количества продукта: 'ID продукта' | 'количество'
+                                * Удаление из корзины: 'ID продукта' | 'количество = 0'
                             1. Вывести список товаров в корзине.
                             2. Фильтрация товаров по ключевым словам.
                             3. Фильтрация по ценам.
@@ -240,20 +238,20 @@ public class Main { // StartShop
                     while (true) {
                         long prodID = userInput.nextLong();
 
-                        // Закончить составление корзины
+// Закончить составление корзины
                         if (prodID == 0) {
                             break;
                         }
 
-                        // Вывести список товаров в корзине
+// Вывести список товаров в корзине
                         if (prodID == 1 && !cartService.getItem().isEmpty()) {
-                            System.out.print(cartService);
                             System.out.printf("""
-                                    Total cart price: %s
-                                    """,cartService.getTotalPrice());
+                                    Ваша корзина:
+                                    %sTotal cart price: %s
+                                    """, cartService, cartService.getTotalPrice());
                             System.out.print("""
                                     
-                                    Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
+                                        * Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
                                     2. Фильтрация товаров по ключевым словам.
                                     3. Фильтрация по ценам.
                                     4. Список доступных к покупке товаров.
@@ -271,8 +269,7 @@ public class Main { // StartShop
                             continue;
                         }
 
-// TODO -> Фильтрация товаров по ключевым словам
-                        // Фильтрация товаров по ключевым словам
+// Фильтрация товаров по ключевым словам
                         if (prodID == 2) {
                             System.out.println("Type keyword (e.g. 'beverage', 'apple':");
                             userInput.nextLine();
@@ -288,27 +285,61 @@ public class Main { // StartShop
                             }
 //                            productService.searchProductByKeyword(userKeyword).forEach(System.out::println);
                             System.out.print("""
-                                    //                                    TODO: keyword filter
+                                    
+                                        * Добавление продукта в корзину: 'ID продукта' | 'количество'
+                                        * Изменение количества продукта: 'ID продукта' | 'количество'
+                                        * Удаление из корзины: 'ID продукта' | 'количество = 0'
+                                    1. Вывести список товаров в корзине.
+                                    2. Фильтрация товаров по ключевым словам.
+                                    3. Фильтрация по ценам.
+                                    4. Список доступных к покупке товаров.
+                                    0. Закончить составление корзины.
                                     """);
                             continue;
                         }
 
-                        // Фильтрация товаров по ценам
+// Фильтрация товаров по ценам
                         if (prodID == 3) {
                             System.out.println("Type min and max price: (e.g. 123 4567)");
-                            int min = userInput.nextInt(), max = userInput.nextInt();
+                            int num1 = userInput.nextInt();
+                            int num2 = userInput.nextInt();
+                            int min = Math.min(num1, num2);
+                            int max = Math.max(num1, num2);
                             if (min > 0 && max > min) {
                                 System.out.printf("""
                                         Filtered by price from %d to %d:
                                         """, min, max);
                                 List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
                                 productList.forEach(System.out::println);
-                                System.out.println();
-                                continue;
+                                System.out.print("""
+                                            
+                                            * Добавление продукта в корзину: 'ID продукта' | 'количество'
+                                            * Изменение количества продукта: 'ID продукта' | 'количество'
+                                            * Удаление из корзины: 'ID продукта' | 'количество = 0'
+                                        1. Вывести список товаров в корзине.
+                                        2. Фильтрация товаров по ключевым словам.
+                                        3. Фильтрация по ценам.
+                                        4. Список доступных к покупке товаров.
+                                        0. Закончить составление корзины.
+                                        """);
+                            } else {
+                                System.out.println("Цена не может быть отрицательной");
+                                System.out.print("""
+                                            
+                                            * Добавление продукта в корзину: 'ID продукта' | 'количество'
+                                            * Изменение количества продукта: 'ID продукта' | 'количество'
+                                            * Удаление из корзины: 'ID продукта' | 'количество = 0'
+                                        1. Вывести список товаров в корзине.
+                                        2. Фильтрация товаров по ключевым словам.
+                                        3. Фильтрация по ценам.
+                                        4. Список доступных к покупке товаров.
+                                        0. Закончить составление корзины.
+                                        """);
                             }
+                            continue;
                         }
 
-                        // Available Products List
+// Available Products List
                         if (prodID == 4) {
                             System.out.print("""
                                     Available Products List:
@@ -319,7 +350,7 @@ public class Main { // StartShop
                             continue;
                         }
 
-                        // Оформление заказа
+// Оформление заказа
                         if (prodID == 5 && !cartService.getItem().isEmpty()) {
                             userInput.nextLine(); // сбросить строку
                             orderCreationStation(currentUser, cartService, orderService, userInput);
@@ -338,7 +369,7 @@ public class Main { // StartShop
                             break;
                         }
 
-                        // Если ID товара не существует
+// Если ID товара не существует
                         if (productService.getProductById(prodID).isEmpty()) {
                             System.out.printf("""
                                     Item ID %d not exist
@@ -348,46 +379,50 @@ public class Main { // StartShop
 
                         int qty = userInput.nextInt();
 
-                        // Заглядываем в корзину и ищем товар
+// Заглядываем в корзину и ищем товар
                         Optional<Product> productOptional = Optional.ofNullable(productRepo.findById(prodID));
                         Product product = productOptional.orElse(null);
                         boolean prodExistInCart = cartService.getItem()
                                 .stream()
                                 .anyMatch(cartItem -> cartItem.getProduct().equals(product));
 
-                        // Если товар есть в корзине и кол-во > 0, то обновляем количество++
+// Если товар есть в корзине и кол-во > 0, то обновляем количество++
                         if (prodExistInCart && qty > 0) {
                             cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
                             System.out.printf("""
                                     Item's %s quantity increased by %s QTY
                                     """, productRepo.findById(prodID).getProductName(), qty);
 
-                            // Если товар есть в корзине и кол-во < 0 обновляем количество--
+// Если товар есть в корзине и кол-во < 0 обновляем количество--
                         } else if (prodExistInCart && qty < 0) {
                             cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
                             System.out.printf("""
                                     Item's %s quantity decreased by %s
                                     """, productRepo.findById(prodID).getProductName(), qty);
 
-                            // Удаление товара из корзины если кол-во == 0
+// Удаление товара из корзины если кол-во == 0
                         } else if (qty == 0) {
                             cartService.removeItem(productService.getProductById(prodID).orElse(null));
                             System.out.printf("""
                                     Item %s removed from cart
                                     """, productRepo.findById(prodID).getProductName());
 
-                            // Если товара нет в корзине - добавляем товар и кол-во
+// Если товара нет в корзине - добавляем товар и кол-во
                         } else {
                             cartService.addItem(productRepo.findById(prodID), qty);
                             System.out.printf("""
                                     Item %s in %s QTY added to cart
                                     """, productRepo.findById(prodID).getProductName(), qty);
+                            System.out.print("""
+                                        * Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
+                                        * 5. Оформить заказ.
+                                    """);
                         }
                     }
                     break;
 
+// Оформление повторного заказа
                 case 2:
-                    // Оформление повторного заказа
 // TODO - сохранение/исправление адреса доставки
                     orderService.repeatOrder(orderRepo.findByUser(currentUser).getLast(), cartService);
                     System.out.printf("""
@@ -406,7 +441,7 @@ public class Main { // StartShop
                         System.out.print("""
                                 Заказ сохранён, как "неоформленный"
                                 """);
-                        return;
+                        continue;
                     }
                     break;
 
@@ -441,24 +476,43 @@ public class Main { // StartShop
                     break;
 /*
                 case 3:
-                    // Отменить заказ
-                    System.out.print("""
-                            //                            Under construction
-                            """);
-//                    System.out.println("Введите email для поиска заказов");
-//                    String email = userInput.nextLine();
-//                    if (!email.isEmpty()) {
-//                        orderService.cancelOrder(cartService);
-//                    } else {
-//                        System.out.println("no such email");
-//                        break;
-//                    }
+// Отменить заказ
+//                    orderService.getOrderByUser(currentUser).forEach(System.out::println);
+                    List<Order> orderList = orderService.getOrderByUser(currentUser);
+                    if (orderList.isEmpty()) {
+                        System.out.println("Нет заказов.");
+                        continue;
+                    } else {
+                        System.out.println("<<<Ваши заказы>>>");
+                        for (int i = 0; i < orderList.size(); i++) {
+                            Order order = orderList.get(i);
+                            System.out.printf("""
+                                    Заказ №%d
+                                    """, i + 1);
+                            System.out.println(order);
+                            System.out.println("-------------------------");
+                        }
+                        System.out.println("Введите номер заказа для отмены (Enter для возврата):");
+                        String userIN = userInput.nextLine();
+                        try {
+                            orderService.cancelOrder(orderList.get(Integer.parseInt(userIN) - 1));
+                            System.out.printf("""
+                                    Заказ #%s отменён.
+                                    """, userIN);
+                        } catch (IllegalStateException e) {
+                            System.out.println(e.getMessage());
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.println("No such order here");
+                        } catch (NumberFormatException e){
+                            System.out.print("");
+                        }
+                    }
                     break;
 
                 case 4:
-                    // Список заказов
-                    assert currentUser != null;
+// Список заказов пользователя по запросу
 //                    orderRepo.findByUserId(currentUser.getUserId()).forEach(System.out::println);
+                    assert currentUser != null;
                     List<Order> userOrders = orderRepo.findByUserId(currentUser.getUserId());
                     if (userOrders.isEmpty()) {
                         System.out.println("Нет заказов.");
@@ -474,19 +528,9 @@ public class Main { // StartShop
                         }
                     }
                     break;
-/** old case
- case 3:
- // Фильтрация по ценам
- System.out.println("Type min and max price: (e.g. 123 4567)");
- int min = userInput.nextInt(), max = userInput.nextInt();
- System.out.printf("""
- Filtered by price from %d to %d:
- """, min, max);
- List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
- productList.forEach(System.out::println);
- System.out.println();
- break;
  */
+
+// Выход из программы
                 case 0:
                     System.out.println("BYE");
                     break;
@@ -595,28 +639,19 @@ public class Main { // StartShop
         }
  */
 
-/**
-        DiscountCalculator discountCalculator = new PercentageDiscountCalculator();
-        ReviewService reviewService = new ReviewServiceImpl(productRepository);
-        RecommendationService recommendationService = new RecommendationServiceImpl(productRepository, orderRepository);
-
-        // Передаём сервисы в UI
-        ConsoleUI ui = new ConsoleUI(productService, cartService, orderService, userService, reviewService, recommendationService);
-        ui.start();
-*/
-
     }
 
+// Метод оформления заказа
     private static void orderCreationStation(User currentUser,
                                              CartService cartService,
                                              OrderService orderService,
                                              Scanner userInput) {
-        // проверка авторизации
+// проверка авторизации
         if (currentUser == null) {
             System.out.println("No User");
             return;
         }
-        // проверка корзины
+// проверка корзины
         if (cartService.getItem().isEmpty()) {
             System.out.println("Корзина пуста");
             return;
@@ -628,8 +663,7 @@ public class Main { // StartShop
         System.out.print("""
                 Введите адрес доставки:
                 """);
-        // сброс буфера
-//        userInput.nextLine();
+//        userInput.nextLine(); // сброс буфера
         String deliveryAddress = userInput.nextLine().trim();
         if (deliveryAddress.isEmpty()) {
             System.out.println("No address - no order");
