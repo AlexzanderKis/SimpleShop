@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchProductByKeyword(String keyword) {
         return productRepo.getAllProduct().stream()
                 .filter(product -> product.getProductKeywords()
-                        .stream().anyMatch(string -> string.contains(keyword.toLowerCase())))
+                        .stream().anyMatch(string -> string.toLowerCase().contains(keyword.toLowerCase())))
                 .toList();
     }
 
