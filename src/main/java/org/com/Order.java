@@ -68,7 +68,11 @@ public class Order {
 //        this.orderCurrentStatus = orderNewStatus;
 //    }
 
-    public Order newStatus(OrderStatus orderNewStatus) {
+    public String getOrderDeliveryAddress() {
+        return orderDeliveryAddress;
+    }
+
+    public Order setNewStatus(OrderStatus orderNewStatus) {
         return new Order(this.user,
                 this.orderID,
                 this.orderProductList,
@@ -78,10 +82,15 @@ public class Order {
                 this.orderDeliveryAddress);
     }
 
-    public String getOrderDeliveryAddress() {
-        return orderDeliveryAddress;
+    public Order setNewOrderID(String newOrderID){
+        return new Order(this.user,
+                newOrderID,
+                this.orderProductList,
+                this.orderTotalPrice,
+                this.orderTotalPriceWithDiscount,
+                this.getOrderCurrentStatus(),
+                this.orderDeliveryAddress);
     }
-
     public void setOrderDeliveryAddress(String orderNewDeliveryAddress) {
         this.orderDeliveryAddress = orderNewDeliveryAddress;
     }
