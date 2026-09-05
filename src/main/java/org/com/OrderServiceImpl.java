@@ -71,18 +71,18 @@ public class OrderServiceImpl implements OrderService {
                 order.getOrderTotalPriceWithDiscount(),
                 order.getOrderDeliveryAddress());
 
-        // clear the cart
+// clear the cart
         cartService.clearCart();
         return order;
     }
 
-    // Поиск списка заказов пользователя
+// Поиск списка заказов пользователя
     @Override
     public List<Order> getOrderByUser(User user) {
         return List.copyOf(orderRepo.findByUserId(user.getUserId()));
     }
 
-    // Отмена заказа. Проверка статуса, создание обновлённой копии со статусом CANCELED
+// Отмена заказа. Проверка статуса, создание обновлённой копии со статусом CANCELED
     @Override
     public Order cancelOrder(Order order) {
 //        if (order.getOrderCurrentStatus().equals(OrderStatus.DELIVERED)) {
@@ -95,14 +95,18 @@ public class OrderServiceImpl implements OrderService {
 //        order.setOrderCurrentStatus(OrderStatus.CANCELED);
 //        orderRepo.save(order);
         if (order.getOrderCurrentStatus() == OrderStatus.CANCELED || order.getOrderCurrentStatus() == OrderStatus.DELIVERED) {
-            throw new IllegalStateException("Can not proceed. No order OR order is done");
+            throw new IllegalStateException("""
+                          CAN NOT PROCEED
+                    Order has been already canceled
+                                OR
+                    Order is already delivered""");
         }
-        Order canceledOrder = order.newStatus(OrderStatus.CANCELED);
+        Order canceledOrder = order.setNewStatus(OrderStatus.CANCELED);
         orderRepo.save(canceledOrder); // сохранение копии заказа (отменённый)
         return canceledOrder;
     }
 
-    // Повтор уже выполненного заказа. Перенос состава завершённого заказа обратно в CartService
+// Повтор уже выполненного заказа. Перенос состава завершённого заказа обратно в CartService
     @Override
     public CartService repeatOrder(Order previousOrder, CartService cartService) {
 //        Order orderRepeat = new Order(previousOrder.getUser(),
@@ -116,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
 //        return orderRepeat;
 
         for (CartItem item : previousOrder.getOrderProductList()){
-            // Передавая 1, мы добавляем каждую единицу товара из списка,
+            // Передавая 1, мы добавляем каждую единицу товара из списка по 1 штуке,
             // а метод addItem внутри корзины сам объединит одинаковые товары и увеличит их количество
             int repeatProductQuantity = 1;
             cartService.addItem(item.getProduct(), item.getQuantity());
@@ -124,16 +128,20 @@ public class OrderServiceImpl implements OrderService {
         return cartService;
     }
 
-    // Возврат зафиксированной стоимости заказа и расчёт стоимости со скидкой
+// Возврат зафиксированной стоимости заказа и расчёт стоимости со скидкой
     @Override
     public BigDecimal totalOrderPrice(Order order) {
         BigDecimal discountPrice = BigDecimal.valueOf(90999.99);
         if (order.getOrderTotalPrice().compareTo(discountPrice) >= 0) {
-            System.out.printf("order total price with %% %s", order.getOrderTotalPriceWithDiscount());
+            System.out.printf("""
+                    ?Order total price with %% %s?
+                    """, order.getOrderTotalPriceWithDiscount());
             return order.getOrderTotalPriceWithDiscount();
         }
 
-        System.out.printf("order total price %s", order.getOrderTotalPrice());
+        System.out.printf("""
+                ?Order total price %s?
+                """, order.getOrderTotalPrice());
         return order.getOrderTotalPrice();
     }
 
