@@ -5,7 +5,15 @@
     "productCategory": "FRUIT",
     "productBrand": "Eden",
     "productPrice": 9999.99,
-    "productKeywords": ["green", "apple", "eden", "divine"]
+    "productKeywords": ["green", "apple", "fresh", "eden", "divine"]
+  },
+  {
+    "productId": 11,
+    "productName": "Red Apple",
+    "productCategory": "FRUIT",
+    "productBrand": "Nod",
+    "productPrice": 6666.66,
+    "productKeywords": ["red", "apple", "fresh", "nod", "non-divine"]
   },
   {
     "productId": 33,
@@ -21,7 +29,7 @@
     "productCategory": "BEVERAGES",
     "productBrand": "Negro de Drink",
     "productPrice": 99.99,
-    "productKeywords": ["coffee", "black", "black coffee", "negro", "black drink"]
+    "productKeywords": ["coffee", "black", "beverage", "black coffee", "negro", "black drink"]
   },
   {
     "productId": 44,
@@ -29,7 +37,7 @@
     "productCategory": "FRESH_PRODUCE",
     "productBrand": "TityCowy",
     "productPrice": 399.99,
-    "productKeywords": ["cow", "milk", "cow milk", "tits milk", "fresh milk"]
+    "productKeywords": ["cow", "milk", "cow milk", "fresh", "tits milk", "fresh milk"]
   },
   {
     "productId": 66,
@@ -37,7 +45,7 @@
     "productCategory": "BEVERAGES",
     "productBrand": "Green Mountain",
     "productPrice": 599.99,
-    "productKeywords": ["tea", "green", "green tea", "mint", "mountain", "correct drink"]
+    "productKeywords": ["tea", "green", "beverage", "green tea", "mint", "mountain", "correct drink"]
   },
   {
     "productId": 69,
@@ -61,7 +69,7 @@
     "productCategory": "VEGETABLE",
     "productBrand": "Auto-Tomato",
     "productPrice": 99.99,
-    "productKeywords": ["auto tomato", "tomato", "red tomato"]
+    "productKeywords": ["auto tomato", "tomato", "fresh", "red tomato"]
   },
   {
     "productId": 22,
@@ -69,6 +77,6 @@
     "productCategory": "MEAT",
     "productBrand": "Turkey from Turkey",
     "productPrice": 499.99,
-    "productKeywords": ["meat", "turkey meat", "turkish meat", "turkish bird"]
+    "productKeywords": ["meat", "turkey meat", "turkish meat", "fresh", "turkish bird"]
   }
 ]
