@@ -595,4 +595,21 @@ public class Main { // StartShop
         orderService.createOrder(currentUser, deliveryAddress, cartService);
         System.out.println("DONE");
     }
+
+// Вывод списка заказов
+    private static void printOrderList(List<Order> orderList) {
+        if (orderList.isEmpty()) {
+            System.out.println("Нет заказов.");
+        } else {
+            System.out.println("<<<Ваши заказы>>>");
+            for (int i = 0; i < orderList.size(); i++) {
+                Order order = orderList.get(i);
+                System.out.printf("""
+                        Заказ №%d
+                        """, i + 1);
+                System.out.println(order);
+                System.out.println("-------------------------");
+            }
+        }
+    }
 }
