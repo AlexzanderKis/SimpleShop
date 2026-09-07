@@ -1,6 +1,7 @@
 package org.com;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
@@ -11,6 +12,7 @@ public class Order {
     private final BigDecimal orderTotalPriceWithDiscount;
     private final OrderStatus orderCurrentStatus;
     private String orderDeliveryAddress;
+    private final LocalDateTime orderCreationDate;
 
     public Order(User user,
                  String orderID,
@@ -18,7 +20,8 @@ public class Order {
                  BigDecimal orderTotalPrice,
                  BigDecimal orderTotalPriceWithDiscount,
                  OrderStatus orderCurrentStatus,
-                 String orderDeliveryAddress) {
+                 String orderDeliveryAddress,
+                 LocalDateTime orderCreationDate) {
         this.user = user;
         this.orderID = orderID;
         this.orderProductList = orderProductList;
@@ -26,6 +29,7 @@ public class Order {
         this.orderTotalPriceWithDiscount = orderTotalPriceWithDiscount;
         this.orderCurrentStatus = orderCurrentStatus;
         this.orderDeliveryAddress = orderDeliveryAddress;
+        this.orderCreationDate = orderCreationDate;
     }
 
     public User getUser(){
@@ -40,9 +44,9 @@ public class Order {
         return orderProductList;
     }
 
-//    public BigDecimal getOrderTotalPrice() {
-//        return orderTotalPrice;
-//    }
+    public LocalDateTime getOrderCreationDate(){
+        return orderCreationDate;
+    }
 
     // Order — это зафиксированный снимок (snapshot) на момент покупки:
     // у него уже есть сохранённая итоговая сумма (orderTotalPrice),
@@ -79,7 +83,8 @@ public class Order {
                 this.orderTotalPrice,
                 this.orderTotalPriceWithDiscount,
                 orderNewStatus,
-                this.orderDeliveryAddress);
+                this.orderDeliveryAddress,
+                orderCreationDate);
     }
 
     public Order setNewOrderID(String newOrderID){
@@ -89,7 +94,8 @@ public class Order {
                 this.orderTotalPrice,
                 this.orderTotalPriceWithDiscount,
                 this.getOrderCurrentStatus(),
-                this.orderDeliveryAddress);
+                this.orderDeliveryAddress,
+                orderCreationDate);
     }
     public void setOrderDeliveryAddress(String orderNewDeliveryAddress) {
         this.orderDeliveryAddress = orderNewDeliveryAddress;
@@ -100,10 +106,11 @@ public class Order {
         StringBuilder stringBuilder = new StringBuilder();
         System.out.printf("""
                 OrderID: %s
+                Order date: %s
                 Current status: %s
                 Delivery address: %s
                 Total price: %s
-                """, orderID, orderCurrentStatus, orderDeliveryAddress, orderTotalPrice);
+                """, orderID, orderCreationDate, orderCurrentStatus, orderDeliveryAddress, orderTotalPrice);
         for (CartItem item : orderProductList) {
             if (item.getQuantity() == 0) {
                 continue;
