@@ -641,6 +641,182 @@ public class Main { // StartShop
 
     }
 
+// Метод выводит доступные действия для конкретного заказа и выполняет их
+    private static void orderActionMenu(Order order,
+                                        OrderService orderService,
+                                        CartService cartService,
+                                        Scanner userInput) {
+        boolean inOrderActionMenu = true;
+        while (inOrderActionMenu) {
+            System.out.printf("""
+                    Выбран заказ:
+                    %s
+                    """, order);
+            System.out.print("""
+                    1. Оформить заказ.
+                    2. Отменить заказ.
+                    3. Повторить заказ.
+                    4. Изменить адрес доставки.
+                    0. Назад к списку заказов.
+                    """);
+
+            String ch = userInput.nextLine();
+            int select;
+            try {
+                select = Integer.parseInt(ch);
+            } catch (NumberFormatException e) {
+                System.out.println("Введите число");
+                continue;
+            }
+            switch (select) {
+
+// Оформление уже созданного заказа
+                case 1:
+                    System.out.print("""
+//                            Order confirmation station
+                            """);
+                    if (order.getOrderCurrentStatus() != OrderStatus.CREATED) {
+                        System.out.print("""
+                                Заказ нельзя оформить
+                                """);
+                    } else {
+                        System.out.print("Введите адрес доставки: ");
+                        String address = userInput.nextLine().trim();
+                        if (address.isEmpty()) {
+                            System.out.println("Адрес не может быть пустым.");
+                            break;
+                        }
+                        Order confirmedOrder = new Order(
+                                order.getUser(),
+                                order.getOrderID(),
+                                order.getOrderProductList(),
+                                order.getOrderTotalPrice(),
+                                order.getOrderTotalPriceWithDiscount(),
+                                OrderStatus.NEW_ORDER,
+                                address,
+                                LocalDateTime.now()); // дата меняется на новую при оформлении
+                        orderService.updateOrder(confirmedOrder);
+                        System.out.println("Заказ оформлен!");
+                        inOrderActionMenu = false;
+                        break;
+                    }
+                    break;
+
+// Отмена заказа
+                case 2:
+                    System.out.print("""
+//                            Order cancellation station
+                            """);
+                    try {
+                        orderService.cancelOrder(order);
+                        System.out.printf("""
+                                Заказ #%s отменён.
+                                """, order.getOrderID());
+                        inOrderActionMenu = false; // возврат в меню
+                    } catch (IllegalStateException e) {
+                        System.out.println(e.getMessage());
+                        inOrderActionMenu = false;
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Заказа с таким номером нет.");
+                        inOrderActionMenu = false;
+                    } catch (NumberFormatException e) {
+                        // пустой ввод – просто возврат
+                        inOrderActionMenu = false;
+                    }
+                    break;
+
+// Повтор существующего заказа
+                case 3:
+// TODO - сохранение/исправление адреса доставки
+
+                    System.out.print("""
+//                            Order repetition station
+                            """);
+                    Order newOrder = orderService.repeatOrder(order, cartService);
+                    System.out.printf("""
+                            Повтор заказа:
+                            %s
+                            Товары из заказа добавлены в корзину.
+                            """, cartService);
+//                    System.out.println("Товары из заказа добавлены в корзину.");
+                    System.out.print("""
+                            Оформить заказ? Y/N
+                            """);
+                    String userAnswer = userInput.nextLine().trim();
+                    if (userAnswer.equalsIgnoreCase("Y")) {
+                        // Оформляем новый заказ – запрашиваем адрес и меняем статус
+                        System.out.print("Введите адрес доставки: ");
+                        String address = userInput.nextLine().trim();
+                        if (address.isEmpty()) {
+                            System.out.println("Адрес не может быть пустым. Заказ останется в статусе CREATED.");
+                        } else {
+                            Order updatedOrder = new Order(
+                                    newOrder.getUser(),
+                                    newOrder.getOrderID(),
+                                    newOrder.getOrderProductList(),
+                                    newOrder.getOrderTotalPrice(),
+                                    newOrder.getOrderTotalPriceWithDiscount(),
+                                    OrderStatus.NEW_ORDER,
+                                    address,
+                                    LocalDateTime.now()); // дата меняется
+                            orderService.updateOrder(updatedOrder);
+                            System.out.print("""
+                                    Заказ оформлен (статус сменён NEW_ORDER).
+                                    
+                                    """);
+                            inOrderActionMenu = false;
+                            break;
+                        }
+                    } else {
+                        System.out.print("""
+                                Заказ сохранён со статусом CREATED. Можно оформить заказ позже.
+                                
+                                """);
+                    }
+                    // Выход из подменю действий
+                    inOrderActionMenu = false;
+                    break;
+
+// Изменить адрес доставки в заказе
+                case 4:
+                    System.out.print("""
+//                            Order address correction station
+                            """);
+                    System.out.print("""
+                            Введите новый адрес доставки:
+                            """);
+                    String newAddress = userInput.nextLine().trim();
+                    if (newAddress.isEmpty()) {
+                        System.out.print("""
+                                Адрес не может быть пустым.
+                                """);
+                        continue;
+                    }
+                    Order updatedOrder = new Order(order.getUser(),
+                            order.getOrderID(),
+                            order.getOrderProductList(),
+                            order.getOrderTotalPrice(),
+                            order.getOrderTotalPriceWithDiscount(),
+                            order.getOrderCurrentStatus(),
+                            newAddress,
+                            order.getOrderCreationDate());
+
+                    orderService.updateOrder(updatedOrder);
+                    order = updatedOrder;
+                    break;
+
+                case 0:
+                    // Назад к списку заказов
+                    System.out.println("Возврат в подменю");
+                    return;
+
+                default:
+                    System.out.println("?NoCommand?");
+                    break;
+            }
+        }
+    }
+
 // Метод оформления заказа
     private static void orderCreationStation(User currentUser,
                                              CartService cartService,
