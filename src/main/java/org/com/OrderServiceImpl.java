@@ -128,6 +128,13 @@ public class OrderServiceImpl implements OrderService {
         return cartService;
     }
 
+// Обновление информации в заказе после изменений
+    @Override
+    public Order updateOrder(Order order) {
+        orderRepo.save(order);
+        return order;
+    }
+
 // Возврат зафиксированной стоимости заказа и расчёт стоимости со скидкой
     @Override
     public BigDecimal totalOrderPrice(Order order) {
