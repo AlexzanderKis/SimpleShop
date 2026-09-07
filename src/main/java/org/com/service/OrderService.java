@@ -10,11 +10,13 @@ import java.util.List;
 public interface OrderService {
     Order createOrder(User user, String deliveryAddress, CartService cartService); // можно передать корзину
 
-    CartService repeatOrder(Order previousOrder, CartService cartService);
+    Order repeatOrder(Order previousOrder, CartService cartService);
 
 //    OrderStatus trackOrder(Long orderId);
 
     List<Order> getOrderByUser(User user);
+
+    Order updateOrder(Order order); // изменение заказа (статус, адрес доставки)
 
     BigDecimal totalOrderPrice(Order order);
 
