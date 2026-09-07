@@ -7,9 +7,8 @@ import org.com.service.CartService;
 import org.com.service.OrderService;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class OrderServiceImpl implements OrderService {
     private final OrderRepo orderRepo;
@@ -34,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
         return productRepo;
     }
 
-    // Валидация корзины, создание заказа с уникальным UUID, сохранение и очистка корзины
+// Валидация корзины, создание заказа с уникальным UUID, сохранение и очистка корзины
     @Override
     public Order createOrder(User user, String deliveryAddress, CartService cartService) {
         if (cartService.getItem().isEmpty()) {
@@ -49,13 +48,14 @@ public class OrderServiceImpl implements OrderService {
                 cartService.getTotalPrice(),
                 cartService.getTotalPrice(), // discount price
                 orderStatus,
-                deliveryAddress
-        );
+                deliveryAddress,
+                LocalDateTime.now());
         orderRepo.save(order);
         System.out.printf("""
                         ??????????????????????????????????????
                                 *ORDER CHECK*
                         Order created: %s
+                        Order date: %s
                         Order status: %s
                         Ordered by user: %s | %s
                         Total order price: %s
@@ -64,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
                         ??????????????????????????????????????
                         """,
                 order.getOrderID(),
+                order.getOrderCreationDate(),
                 order.getOrderCurrentStatus(),
                 order.getUser().getUserId(),
                 order.getUser().getUserName(),
@@ -79,10 +80,12 @@ public class OrderServiceImpl implements OrderService {
 // Поиск списка заказов пользователя
     @Override
     public List<Order> getOrderByUser(User user) {
-        return List.copyOf(orderRepo.findByUserId(user.getUserId()));
+        List<Order> userOrders = new ArrayList<>(orderRepo.findByUserId(user.getUserId()));
+        userOrders.sort(Comparator.comparing(Order::getOrderCreationDate));
+        return List.copyOf(userOrders);
     }
 
-// Отмена заказа. Проверка статуса, создание обновлённой копии со статусом CANCELED
+    // Отмена заказа. Проверка статуса, создание обновлённой копии со статусом CANCELED
     @Override
     public Order cancelOrder(Order order) {
 //        if (order.getOrderCurrentStatus().equals(OrderStatus.DELIVERED)) {
@@ -108,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
 
 // Повтор уже выполненного заказа. Перенос состава завершённого заказа обратно в CartService
     @Override
-    public CartService repeatOrder(Order previousOrder, CartService cartService) {
+    public Order repeatOrder(Order previousOrder, CartService cartService) {
 //        Order orderRepeat = new Order(previousOrder.getUser(),
 //                UUID.randomUUID().toString(),
 //                previousOrder.getOrderProductList(),
@@ -118,14 +121,24 @@ public class OrderServiceImpl implements OrderService {
 //                previousOrder.getOrderDeliveryAddress());
 //        orderRepo.save(orderRepeat);
 //        return orderRepeat;
-
+        List<CartItem> previousOrderList = List.copyOf(previousOrder.getOrderProductList());
+        Order repeatedOrder = new Order(previousOrder.getUser(),
+                UUID.randomUUID().toString().substring(0,23).toUpperCase(Locale.ROOT), // создание рандомного ID заказа 24 символа
+                previousOrderList,
+                previousOrder.getOrderTotalPrice(),
+                previousOrder.getOrderTotalPriceWithDiscount(), // discount price
+                OrderStatus.CREATED,
+                previousOrder.getOrderDeliveryAddress(),
+                LocalDateTime.now());
+        orderRepo.save(repeatedOrder);
+//        return cartService;
         for (CartItem item : previousOrder.getOrderProductList()){
             // Передавая 1, мы добавляем каждую единицу товара из списка по 1 штуке,
             // а метод addItem внутри корзины сам объединит одинаковые товары и увеличит их количество
-            int repeatProductQuantity = 1;
+            // int repeatProductQuantity = 1;
             cartService.addItem(item.getProduct(), item.getQuantity());
         }
-        return cartService;
+        return repeatedOrder;
     }
 
 // Обновление информации в заказе после изменений
