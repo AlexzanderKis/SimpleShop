@@ -127,6 +127,17 @@ public class Cart implements CartService {
     }
 
     @Override
+    public void clearCart() {
+/** ConcurrentModificationException here
+        for (CartItem item : productsInCart) {
+            productsInCart.remove(item);
+        }
+*/
+        productsInCart.clear();
+        System.out.println("?CartEmpty?");
+    }
+
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (CartItem item : productsInCart){
@@ -145,16 +156,5 @@ public class Cart implements CartService {
                     item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))));
         }
         return stringBuilder.toString();
-    }
-
-    @Override
-    public void clearCart() {
-/** ConcurrentModificationException here
-        for (CartItem item : productsInCart) {
-            productsInCart.remove(item);
-        }
-*/
-        productsInCart.clear();
-        System.out.println("?CartEmpty?");
     }
 }
