@@ -20,6 +20,7 @@ import org.com.tools.ProductListParser;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -192,9 +193,9 @@ public class Main { // StartShop
             }
 */
 
-// вывод списка продуктов
+// Вывод списка продуктов доступных к покупке
             System.out.print("""
-                    Available Products List:
+                    Список продуктов доступных к покупке:
                     """);
             List<Product> productList = productService.getAllProduct();
             productList.forEach(System.out::println);
@@ -215,13 +216,12 @@ public class Main { // StartShop
         while (true) {
             System.out.print("""
                     1. Составить продуктовую корзину (Начать покупки).
-                    2. Оформить повторный заказ.
-                    3. Отменить заказ.
-                    4. Список заказов.
+                    2. Список заказов.
                     0. Выход.
                     """);
             int select = userInput.nextInt();
             userInput.nextLine();
+// Main switch
             switch (select) {
                 case 1:
                     System.out.print("""
@@ -300,19 +300,21 @@ public class Main { // StartShop
 
 // Фильтрация товаров по ценам
                         if (prodID == 3) {
-                            System.out.println("Type min and max price: (e.g. 123 4567)");
+                            System.out.println("Диапазон цен доступных продуктов от 99.99 до 9999.99");
+                            System.out.println("Напишите мин и мах цену: (e.g. 123 4567)");
                             int num1 = userInput.nextInt();
                             int num2 = userInput.nextInt();
                             int min = Math.min(num1, num2);
                             int max = Math.max(num1, num2);
                             if (min > 0 && max > min) {
                                 System.out.printf("""
-                                        Filtered by price from %d to %d:
+                                        Фильтрация по цене от %d до %d:
                                         """, min, max);
-                                List<Product> productList = productService.filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
+                                List<Product> productList = productService
+                                        .filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
                                 productList.forEach(System.out::println);
                                 System.out.print("""
-                                            
+
                                             * Добавление продукта в корзину: 'ID продукта' | 'количество'
                                             * Изменение количества продукта: 'ID продукта' | 'количество'
                                             * Удаление из корзины: 'ID продукта' | 'количество = 0'
@@ -325,7 +327,7 @@ public class Main { // StartShop
                             } else {
                                 System.out.println("Цена не может быть отрицательной");
                                 System.out.print("""
-                                            
+
                                             * Добавление продукта в корзину: 'ID продукта' | 'количество'
                                             * Изменение количества продукта: 'ID продукта' | 'количество'
                                             * Удаление из корзины: 'ID продукта' | 'количество = 0'
@@ -339,10 +341,10 @@ public class Main { // StartShop
                             continue;
                         }
 
-// Available Products List
+// Список продуктов доступных к покупке
                         if (prodID == 4) {
                             System.out.print("""
-                                    Available Products List:
+                                    Список продуктов доступных к покупке:
                                     """);
                             List<Product> productList = productService.getAllProduct();
                             productList.forEach(System.out::println);
@@ -357,7 +359,7 @@ public class Main { // StartShop
 /*
                             userInput.nextLine(); // сбросить строку
                             System.out.println("Order Creation Station");
-                            System.out.println("Type you address:");
+                            System.out.println("Type address:");
                             String deliveryAddress = userInput.nextLine();
                             if (deliveryAddress.isEmpty()) {
                                 System.out.println("No address - no order.");
@@ -377,9 +379,9 @@ public class Main { // StartShop
                             continue;
                         }
 
-                        int qty = userInput.nextInt();
+                        int qty = userInput.nextInt(); // переменная для количества товара
 
-// Заглядываем в корзину и ищем товар
+// Заглядываем в продукты и ищем товар
                         Optional<Product> productOptional = Optional.ofNullable(productRepo.findById(prodID));
                         Product product = productOptional.orElse(null);
                         boolean prodExistInCart = cartService.getItem()
@@ -415,15 +417,17 @@ public class Main { // StartShop
                                     """, productRepo.findById(prodID).getProductName(), qty);
                             System.out.print("""
                                         * Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
+                                        * 1. Посмотреть корзину.
                                         * 5. Оформить заказ.
                                     """);
                         }
                     }
                     break;
-
+/** old cases
 // Оформление повторного заказа
                 case 2:
 // TODO - сохранение/исправление адреса доставки
+
                     orderService.repeatOrder(orderRepo.findByUser(currentUser).getLast(), cartService);
                     System.out.printf("""
                             Вы повторили заказ:
@@ -468,67 +472,46 @@ public class Main { // StartShop
                         // пустой ввод – просто возврат
                     }
                     break;
-
-// Список заказов пользователя по запросу
-                case 4:
-                    List<Order> userOrders = orderService.getOrderByUser(currentUser);
-                    printOrderList(userOrders);
-                    break;
-/*
-                case 3:
-// Отменить заказ
-//                    orderService.getOrderByUser(currentUser).forEach(System.out::println);
-                    List<Order> orderList = orderService.getOrderByUser(currentUser);
-                    if (orderList.isEmpty()) {
-                        System.out.println("Нет заказов.");
-                        continue;
-                    } else {
-                        System.out.println("<<<Ваши заказы>>>");
-                        for (int i = 0; i < orderList.size(); i++) {
-                            Order order = orderList.get(i);
-                            System.out.printf("""
-                                    Заказ №%d
-                                    """, i + 1);
-                            System.out.println(order);
-                            System.out.println("-------------------------");
-                        }
-                        System.out.println("Введите номер заказа для отмены (Enter для возврата):");
-                        String userIN = userInput.nextLine();
-                        try {
-                            orderService.cancelOrder(orderList.get(Integer.parseInt(userIN) - 1));
-                            System.out.printf("""
-                                    Заказ #%s отменён.
-                                    """, userIN);
-                        } catch (IllegalStateException e) {
-                            System.out.println(e.getMessage());
-                        } catch (IndexOutOfBoundsException e) {
-                            System.out.println("No such order here");
-                        } catch (NumberFormatException e){
-                            System.out.print("");
-                        }
-                    }
-                    break;
-
-                case 4:
-// Список заказов пользователя по запросу
-//                    orderRepo.findByUserId(currentUser.getUserId()).forEach(System.out::println);
-                    assert currentUser != null;
-                    List<Order> userOrders = orderRepo.findByUserId(currentUser.getUserId());
-                    if (userOrders.isEmpty()) {
-                        System.out.println("Нет заказов.");
-                    } else {
-                        System.out.println("<<<Ваши заказы>>>");
-                        for (int i = 0; i < userOrders.size(); i++) {
-                            Order order = userOrders.get(i);
-                            System.out.printf("""
-                                    Заказ №%d
-                                    """, i + 1);
-                            System.out.println(order);
-                            System.out.println("-------------------------");
-                        }
-                    }
-                    break;
  */
+
+// Список заказов пользователя по запросу
+                case 2:
+                    while (true) {
+                        List<Order> userOrders = orderService.getOrderByUser(currentUser);
+                        printOrderList(userOrders);
+
+                        if (userOrders.isEmpty()) {
+                            break;
+                        }
+                        System.out.print("""
+                                Выберите номер заказа для дальнейших действий. (ENTER для возврата):
+                                """);
+
+                        String inLine = userInput.nextLine().trim();
+                        if (inLine.isEmpty()) {
+                            break;
+                        }
+
+                        try {
+                            int index = Integer.parseInt(inLine) - 1;
+                            if (index < 0 || index >= userOrders.size()) {
+                                System.out.println("Неверный номер заказа. Попробуйте снова. (ENTER для возврата):");
+                                continue;
+                            }
+                            Order selectedOrder = userOrders.get(index);
+                            // Показать меню действий с выбранным заказом
+                            orderActionMenu(selectedOrder, orderService, cartService, userInput);
+                            // После завершения действия цикл продолжается – снова показываем список
+                            userOrders = orderService.getOrderByUser(currentUser);
+                            if (userOrders.isEmpty()) {
+                                System.out.println("Нет заказов.");
+                                break; // выходим из case 2 в главное меню
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Введите число или нажмите Enter для выхода.");
+                        }
+                    }
+                    break;
 
 // Выход из программы
                 case 0:
@@ -539,21 +522,11 @@ public class Main { // StartShop
                     System.out.println("?NoCommand?");
                     break;
             }
+
             if (select == 0) {
                 break;
             }
         }
-
-//        while (true) {
-//            if (!cartService.getItem().isEmpty() && userInput.nextLine().equalsIgnoreCase("Y")) {
-//                System.out.print("""
-//                        order creation here
-//                        """);
-//            } else {
-//                System.out.println("NO-NO. Cart is empty");
-//            }
-//        }
-
 /** old test main
         // register new user
         try {
@@ -638,7 +611,6 @@ public class Main { // StartShop
             System.out.println("Ready for new order");
         }
  */
-
     }
 
 // Метод выводит доступные действия для конкретного заказа и выполняет их
@@ -668,6 +640,7 @@ public class Main { // StartShop
                 System.out.println("Введите число");
                 continue;
             }
+// Sub-main switch
             switch (select) {
 
 // Оформление уже созданного заказа
@@ -834,7 +807,7 @@ public class Main { // StartShop
         }
 
         System.out.print("""
-                <Order Creation Station>
+//                <Order Creation Station>
                 """);
         System.out.print("""
                 Введите адрес доставки:
