@@ -4,8 +4,10 @@ import org.com.repos.ProductRepo;
 import org.com.service.ProductService;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ProductServiceImpl implements ProductService {
 
@@ -41,7 +43,8 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.getAllProduct().stream()
                 .filter(product -> product.getProductPrice().compareTo(min) >= 0
                         && product.getProductPrice().compareTo(max) <= 0)
-                .toList();
+                .sorted(Comparator.comparing(Product::getProductPrice))
+                .collect(Collectors.toList());
     }
 
     @Override
