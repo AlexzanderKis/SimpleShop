@@ -18,12 +18,13 @@ import org.com.service.UserService;
 import org.com.tools.ProductListParser;
 
 import java.io.File;
-import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
+import java.io.IOException;
 
 /**
  * Примеры возможностей программы:
@@ -652,6 +653,10 @@ public class Main { // StartShop
                         System.out.print("""
                                 Заказ нельзя оформить
                                 """);
+                        System.out.printf("""
+                                Статус заказа: %s
+                                
+                                """, order.getOrderCurrentStatus());
                     } else {
                         System.out.print("Введите адрес доставки: ");
                         String address = userInput.nextLine().trim();
@@ -667,7 +672,7 @@ public class Main { // StartShop
                                 order.getOrderTotalPriceWithDiscount(),
                                 OrderStatus.NEW_ORDER,
                                 address,
-                                LocalDateTime.now()); // дата меняется на новую при оформлении
+                                LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy dd MM | hh:mm:ss a")))); // дата меняется на новую при оформлении
                         orderService.updateOrder(confirmedOrder);
                         System.out.println("Заказ оформлен!");
                         inOrderActionMenu = false;
@@ -684,13 +689,17 @@ public class Main { // StartShop
                         orderService.cancelOrder(order);
                         System.out.printf("""
                                 Заказ #%s отменён.
+                                
                                 """, order.getOrderID());
                         inOrderActionMenu = false; // возврат в меню
                     } catch (IllegalStateException e) {
                         System.out.println(e.getMessage());
                         inOrderActionMenu = false;
                     } catch (IndexOutOfBoundsException e) {
-                        System.out.println("Заказа с таким номером нет.");
+                        System.out.print("""
+                                Заказа с таким номером нет.
+                                
+                                """);
                         inOrderActionMenu = false;
                     } catch (NumberFormatException e) {
                         // пустой ввод – просто возврат
@@ -731,7 +740,7 @@ public class Main { // StartShop
                                     newOrder.getOrderTotalPriceWithDiscount(),
                                     OrderStatus.NEW_ORDER,
                                     address,
-                                    LocalDateTime.now()); // дата меняется
+                                    LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy dd MM | hh:mm:ss a")))); // дата меняется
                             orderService.updateOrder(updatedOrder);
                             System.out.print("""
                                     Заказ оформлен (статус сменён NEW_ORDER).
