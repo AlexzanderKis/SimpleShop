@@ -8,6 +8,7 @@ import org.com.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class OrderServiceImpl implements OrderService {
@@ -49,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
                 cartService.getTotalPrice(), // discount price
                 orderStatus,
                 deliveryAddress,
-                LocalDateTime.now());
+                LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/dd/MM | hh:mm:ss a")), DateTimeFormatter.ofPattern("yyyy/dd/MM | hh:mm:ss a")));
         orderRepo.save(order);
         System.out.printf("""
                         ??????????????????????????????????????
@@ -129,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
                 previousOrder.getOrderTotalPriceWithDiscount(), // discount price
                 OrderStatus.CREATED,
                 previousOrder.getOrderDeliveryAddress(),
-                LocalDateTime.now());
+                LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/dd/MM | hh:mm:ss a")), DateTimeFormatter.ofPattern("yyyy/dd/MM | hh:mm:ss a")));
         orderRepo.save(repeatedOrder);
 //        return cartService;
         for (CartItem item : previousOrder.getOrderProductList()){
