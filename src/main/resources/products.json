@@ -17,25 +17,25 @@
   },
   {
     "productId": 33,
-    "productName": "Beef jerk-off",
+    "productName": "Beef jerky",
     "productCategory": "MEAT",
-    "productBrand": "Jerk-Off Beef",
+    "productBrand": "BeefJerk",
     "productPrice": 199.99,
     "productKeywords": ["beef", "jerky", "jerk-off", "jerky"]
   },
   {
     "productId": 55,
-    "productName": "Black arse Coffee",
+    "productName": "Black Coffee",
     "productCategory": "BEVERAGES",
-    "productBrand": "Negro de Drink",
+    "productBrand": "KingsDrink",
     "productPrice": 99.99,
-    "productKeywords": ["coffee", "black", "beverage", "black coffee", "negro", "black drink"]
+    "productKeywords": ["coffee", "black", "beverage", "black coffee", "black drink"]
   },
   {
     "productId": 44,
     "productName": "Fresh Tit Cow Milk",
     "productCategory": "FRESH_PRODUCE",
-    "productBrand": "TityCowy",
+    "productBrand": "TidyCowy",
     "productPrice": 399.99,
     "productKeywords": ["cow", "milk", "cow milk", "fresh", "tits milk", "fresh milk"]
   },
