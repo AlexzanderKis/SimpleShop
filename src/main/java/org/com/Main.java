@@ -38,7 +38,7 @@ import java.io.IOException;
 public class Main { // StartShop
     public static void main(String[] args) throws Exception {
         System.out.print("""
-                    <*Shop is Open*>
+                    <*Магазин Открыт*>
                 """);
 
 // Репозитории
@@ -72,25 +72,25 @@ public class Main { // StartShop
 
 // TODO LOGIN
                 case 1:
-                    System.out.println("Login");
+                    System.out.println("Логин");
                     while (true) {
                         System.out.print("""
-                                Type login(user email):
+                                Логин пользователя (email):
                                 """);
                         String email = userInput.nextLine();
                         System.out.print("""
-                                Type password:
+                                Пароль пользователя:
                                 """);
                         String password = userInput.nextLine();
                         if (userService.getUserByEmail(email).isPresent()) {
                             userService.login(email, password);
                             currentUser = userService.getUserByEmail(email).get();
-                            System.out.println("User exist: " + currentUser.getUserId());
-                            System.out.println("User logging. \nHello " + currentUser.getUserName());
+                            System.out.println("Пользователь существует: " + currentUser.getUserId());
+                            System.out.println("Пользователь вошёл. \nПривет " + currentUser.getUserName());
                         } else {
                             System.out.print("""
-                                    no user
-                                    something typed wrong OR must register
+                                    Нет пользователя
+                                    Что-то введено неверно или пользователь не существует
                                     """);
                         }
                         break;
@@ -98,7 +98,7 @@ public class Main { // StartShop
                     break;
 // REGISTRATION
                 case 2:
-                    System.out.println("Registration");
+                    System.out.println("Регистрация");
                     while (true) {
                         Scanner input = new Scanner(userRegistrationFile); // for file usage (remove for user input usage)
 // NAME
@@ -248,7 +248,7 @@ public class Main { // StartShop
                         if (prodID == 1 && !cartService.getItem().isEmpty()) {
                             System.out.printf("""
                                     Ваша корзина:
-                                    %sTotal cart price: %s
+                                    %sИтоговая цена: %s
                                     """, cartService, cartService.getTotalPrice());
                             System.out.print("""
                                     
@@ -272,7 +272,7 @@ public class Main { // StartShop
 
 // Фильтрация товаров по ключевым словам
                         if (prodID == 2) {
-                            System.out.println("Type keyword (e.g. 'beverage', 'apple':");
+                            System.out.println("Введите ключевое слово (e.g. 'напиток', 'яблоко':");
                             userInput.nextLine();
                             String userKeyword = userInput.nextLine();
                             System.out.printf("""
@@ -375,7 +375,7 @@ public class Main { // StartShop
 // Если ID товара не существует
                         if (productService.getProductById(prodID).isEmpty()) {
                             System.out.printf("""
-                                    Item ID %d not exist
+                                    ID продукта %d не существует
                                     """, prodID);
                             continue;
                         }
@@ -393,28 +393,28 @@ public class Main { // StartShop
                         if (prodExistInCart && qty > 0) {
                             cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
                             System.out.printf("""
-                                    Item's %s quantity increased by %s QTY
+                                    Количество продукта %s увеличено на %s шт.
                                     """, productRepo.findById(prodID).getProductName(), qty);
 
 // Если товар есть в корзине и кол-во < 0 обновляем количество--
                         } else if (prodExistInCart && qty < 0) {
                             cartService.updateQuantity(productService.getProductById(prodID).orElse(null), qty);
                             System.out.printf("""
-                                    Item's %s quantity decreased by %s
-                                    """, productRepo.findById(prodID).getProductName(), qty);
+                                    Количество продукта %s уменьшено на %s шт.
+                                    """, productRepo.findById(prodID).getProductName(), Math.abs(qty));
 
 // Удаление товара из корзины если кол-во == 0
                         } else if (qty == 0) {
                             cartService.removeItem(productService.getProductById(prodID).orElse(null));
                             System.out.printf("""
-                                    Item %s removed from cart
+                                    Продукт %s удален из корзины
                                     """, productRepo.findById(prodID).getProductName());
 
 // Если товара нет в корзине - добавляем товар и кол-во
                         } else {
                             cartService.addItem(productRepo.findById(prodID), qty);
                             System.out.printf("""
-                                    Item %s in %s QTY added to cart
+                                    Продукт %s в %s количестве добавлен корзину
                                     """, productRepo.findById(prodID).getProductName(), qty);
                             System.out.print("""
                                         * Для составления/изменения корзины продолжайте вводить: 'ID продукта' | 'количество'
@@ -806,7 +806,7 @@ public class Main { // StartShop
                                              Scanner userInput) {
 // проверка авторизации
         if (currentUser == null) {
-            System.out.println("No User");
+            System.out.println("Нет пользователя");
             return;
         }
 // проверка корзины
@@ -824,7 +824,7 @@ public class Main { // StartShop
 //        userInput.nextLine(); // сброс буфера
         String deliveryAddress = userInput.nextLine().trim();
         if (deliveryAddress.isEmpty()) {
-            System.out.println("No address - no order");
+            System.out.println("Нет адреса - нет заказа");
             return;
         }
         orderService.createOrder(currentUser, deliveryAddress, cartService);
