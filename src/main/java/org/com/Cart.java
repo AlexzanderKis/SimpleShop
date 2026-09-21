@@ -32,10 +32,10 @@ public class Cart implements CartService {
             //Если товар найден, мы обновляем его количество и сразу выходим из метода. Mini updateQuantity()
             if (item.getProduct().equals(product)) {
                 item.setQuantity(item.getQuantity() + quantity);
-                System.out.printf("""
+//                System.out.printf("""
 //                                ?Item's %s quantity changed to %s?
-                                """
-                        , product.getProductName(), item.getQuantity());
+//                                """
+//                        , product.getProductName(), item.getQuantity());
                 return;
             }
         }
@@ -43,12 +43,12 @@ public class Cart implements CartService {
         //Если цикл прошёл по всей корзине и ничего не нашёл, создаётся и добавляется новая позиция CartItem.
         CartItem cartItem = new CartItem(product, quantity);
         productsInCart.add(cartItem);
-        if (quantity > 0) {
-            System.out.printf("""
+//        if (quantity > 0) {
+//            System.out.printf("""
 //                            ?Item %s in quantity of %s added to cart?
-                            """
-                    , product.getProductName(), quantity);
-        }
+//                            """
+//                    , product.getProductName(), quantity);
+//        }
     }
 
     @Override
@@ -60,9 +60,9 @@ public class Cart implements CartService {
  return;
  }
  */
-        System.out.printf("""
+//        System.out.printf("""
 //                ?removeItem()? ?Item %s removed?
-                """, product.getProductName());
+//                """, product.getProductName());
         productsInCart.removeIf(cartItem -> cartItem.getProduct().equals(product));
     }
 
@@ -71,27 +71,27 @@ public class Cart implements CartService {
         // Если количество product = 0, то removeItem() из корзины
         if (quantity == 0) {
             removeItem(product);
-            System.out.printf("""
+//            System.out.printf("""
 //                            ?updateQuantity()? ?Item %s removed from cart?
-                            """
-                    , product.getProductName());
+//                            """
+//                    , product.getProductName());
             return;
         }
         // Если есть такой product, то setQuantity
         for (CartItem item : productsInCart) {
             if (item.getProduct().equals(product) && quantity > 0) {
                 item.setQuantity(item.getQuantity() + quantity);
-                System.out.printf("""
+//                System.out.printf("""
 //                                ?Item's %s quantity increased to %s?
-                                """
-                        , product.getProductName(), item.getQuantity());
+//                                """
+//                        , product.getProductName(), item.getQuantity());
                 return;
             } else if (item.getProduct().equals(product) && quantity < 0) {
                 item.setQuantity(item.getQuantity() + quantity);
-                System.out.printf("""
+//                System.out.printf("""
 //                                ?Item's %s quantity decreased to %s?
-                                """
-                        , product.getProductName(), Math.abs(item.getQuantity()));
+//                                """
+//                        , product.getProductName(), Math.abs(item.getQuantity()));
                 return;
             }
         }
@@ -134,7 +134,7 @@ public class Cart implements CartService {
         }
 */
         productsInCart.clear();
-        System.out.println("?CartEmpty?");
+//        System.out.println("?CartEmpty?");
     }
 
     @Override
