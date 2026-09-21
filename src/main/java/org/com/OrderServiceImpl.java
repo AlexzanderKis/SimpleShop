@@ -100,10 +100,11 @@ public class OrderServiceImpl implements OrderService {
 //        orderRepo.save(order);
         if (order.getOrderCurrentStatus() == OrderStatus.CANCELED || order.getOrderCurrentStatus() == OrderStatus.DELIVERED) {
             throw new IllegalStateException("""
-                          CAN NOT PROCEED
+                          ?CAN NOT PROCEED?
                     Order has been already canceled
                                 OR
-                    Order is already delivered""");
+                    Order is already delivered
+                    """);
         }
         Order canceledOrder = order.setNewStatus(OrderStatus.CANCELED);
         orderRepo.save(canceledOrder); // сохранение копии заказа (отменённый)
@@ -154,15 +155,15 @@ public class OrderServiceImpl implements OrderService {
     public BigDecimal totalOrderPrice(Order order) {
         BigDecimal discountPrice = BigDecimal.valueOf(90999.99);
         if (order.getOrderTotalPrice().compareTo(discountPrice) >= 0) {
-            System.out.printf("""
-                    ?Order total price with %% %s?
-                    """, order.getOrderTotalPriceWithDiscount());
+//            System.out.printf("""
+//                    ?Order total price with %% %s?
+//                    """, order.getOrderTotalPriceWithDiscount());
             return order.getOrderTotalPriceWithDiscount();
         }
 
-        System.out.printf("""
-                ?Order total price %s?
-                """, order.getOrderTotalPrice());
+//        System.out.printf("""
+//                ?Order total price %s?
+//                """, order.getOrderTotalPrice());
         return order.getOrderTotalPrice();
     }
 
