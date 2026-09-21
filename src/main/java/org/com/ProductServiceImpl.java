@@ -17,10 +17,6 @@ public class ProductServiceImpl implements ProductService {
         this.productRepo = productRepo;
     }
 
-    public ProductRepo getProductRepo() {
-        return productRepo;
-    }
-
     @Override
     public List<Product> getAllProduct() {
         return List.copyOf(productRepo.getAllProduct());
