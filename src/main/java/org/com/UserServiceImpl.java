@@ -59,11 +59,11 @@ public class UserServiceImpl implements UserService {
         if (validatePassword(password)) {
             user.setUserPassword(PasswordEncoder.hashPassword(password));
             userRepo.save(user);
-            System.out.println("?UserSaved?");
+//            System.out.println("?UserSaved?");
         } else {
             throw new InvalidPasswordException(); // password incorrect "?PasswordIncorrect?"
         }
-        System.out.println("?Registration successfully done?");
+//        System.out.println("?Registration successfully done?");
     }
 
     // аутентифицирует и обновляет текущую сессию
@@ -72,15 +72,15 @@ public class UserServiceImpl implements UserService {
         Optional<User> userToLogin = userRepo.findByEmail(email);
 
         if (userToLogin.isPresent() && PasswordEncoder.hashMatchesPassword(password, userToLogin.get().getUserPassword())) {
-            System.out.print("""
-                            ?UserExist?
-                    """);
-            System.out.print("""
-                            ?PasswordCorrect?
-                    """);
+//            System.out.print("""
+//                            ?UserExist?
+//                    """);
+//            System.out.print("""
+//                            ?PasswordCorrect?
+//                    """);
             this.currentUser = userToLogin.get();
         } else {
-            throw new UserLoginException("?user email no exist or password incorrect?");
+            throw new UserLoginException("?User email no exist or password incorrect?");
         }
     }
 
