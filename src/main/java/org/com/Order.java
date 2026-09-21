@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+// Order — это зафиксированный снимок (snapshot) на момент покупки:
+// у него уже есть сохранённая итоговая сумма (orderTotalPrice),
+// которая не должна меняться со временем,
+// даже если цены на товары в каталоге изменятся.
+
 public class Order {
     private final User user;
     private final String orderID;
@@ -48,10 +53,6 @@ public class Order {
         return orderCreationDate;
     }
 
-    // Order — это зафиксированный снимок (snapshot) на момент покупки:
-    // у него уже есть сохранённая итоговая сумма (orderTotalPrice),
-    // которая не должна меняться со временем,
-    // даже если цены на товары в каталоге изменятся.
 //    public BigDecimal getOrderTotalPrice(Cart cart) {
 //        return cart.getTotalPrice();
 //    }
