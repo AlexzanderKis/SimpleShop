@@ -4,4 +4,5 @@
 
 
 App created on Java 21
+
 This is still console app - works from Intellij IDEA console
