@@ -1,10 +1,11 @@
-package org.com;
+package org.com.service.impl;
 
 import static org.com.tools.RUPhoneNumberValidator.validateNumber;
 import static org.com.tools.PasswordValidator.validatePassword;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
+import org.com.User;
 import org.com.exceptions.*;
 import org.com.repos.UserRepo;
 import org.com.service.UserService;

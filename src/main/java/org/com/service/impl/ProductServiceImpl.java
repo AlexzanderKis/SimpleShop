@@ -1,5 +1,7 @@
-package org.com;
+package org.com.service.impl;
 
+import org.com.CategoryOfProd;
+import org.com.Product;
 import org.com.repos.ProductRepo;
 import org.com.service.ProductService;
 
