@@ -1,4 +1,4 @@
-package org.com;
+package org.com.domain.entity.enums;
 
 public enum CategoryOfProd {
     FRUIT,
@@ -10,5 +10,5 @@ public enum CategoryOfProd {
     BAKERY,
     CANNED,
     GRAINS_AND_PASTA,
-    BEVERAGES;
+    BEVERAGES
 }

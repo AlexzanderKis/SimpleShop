@@ -1,4 +1,4 @@
-package org.com;
+package org.com.domain.entity.enums;
 
 public enum OrderStatus {
     NEW_ORDER,
@@ -7,5 +7,5 @@ public enum OrderStatus {
     PAID,
     NOT_PAID,
     DELIVERED,
-    CANCELED;
+    CANCELED
 }
