@@ -4,10 +4,12 @@ public class InvalidPasswordException extends RuntimeException {
     public InvalidPasswordException(){
         super("""
                 "?PasswordIncorrect?"
+                Пароль должен содержать минимум 8 символов, заглавную и строчную буквы, цифру и спецсимвол (@#$%^&+=).
                     Ensure there is at least one lowercase letter.
                     Ensure there is at least one uppercase letter.
                     Ensure there is at least one number digit.
                     Ensure there is at least one special character from set [@#$%^&+=].
-                    Requires the total length of the password to be 8 or more characters.""");
+                    Requires the total length of the password to be 8 or more characters.
+                """);
     }
 }

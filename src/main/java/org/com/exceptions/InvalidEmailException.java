@@ -4,7 +4,8 @@ public class InvalidEmailException extends RuntimeException {
     public InvalidEmailException() {
         super("""
                 ?EmailIncorrect?
-                    Valid email address:
+                Некорректный формат email
+                Пример правильного:
                     email@example.com
                     firstname.lastname@example.com
                     firstname+lastname@example.com

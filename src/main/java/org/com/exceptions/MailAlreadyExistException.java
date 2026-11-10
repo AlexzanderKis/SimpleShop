@@ -1,7 +1,10 @@
 package org.com.exceptions;
 
-public class MailAlreadyExistException extends Exception {
-    public MailAlreadyExistException(String message) {
-        super(message);
+public class MailAlreadyExistException extends RuntimeException {
+    public MailAlreadyExistException() {
+        super("""
+                ?EmailAlreadyExist?
+                Пользователь с таким адресом электронной почты уже зарегистрирован.
+                """);
     }
 }
