@@ -15,7 +15,10 @@ import org.com.service.CartService;
 import org.com.service.OrderService;
 import org.com.service.ProductService;
 import org.com.service.UserService;
-import org.com.tools.ProductListParser;
+import org.com.service.impl.Cart;
+import org.com.service.impl.OrderServiceImpl;
+import org.com.service.impl.ProductServiceImpl;
+import org.com.service.impl.UserServiceImpl;
 
 import java.io.File;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +27,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.io.IOException;
 
 /**
  * Примеры возможностей программы:
@@ -187,12 +189,12 @@ public class Main { // StartShop
                 break;
             }
 /** // парсер списка продуктов
-            try {
-                ProductListParser.jsonParser();
-            } catch (IOException e) {
-                System.out.println("Error reading file. File corrupted or no exist: "+e.getMessage());
-            }
-*/
+ try {
+ ProductListParser.jsonParser();
+ } catch (IOException e) {
+ System.out.println("Error reading file. File corrupted or no exist: "+e.getMessage());
+ }
+ */
 
 // Вывод списка продуктов доступных к покупке
             System.out.print("""
@@ -315,7 +317,7 @@ public class Main { // StartShop
                                         .filterProductByPriceRange(BigDecimal.valueOf(min), BigDecimal.valueOf(max));
                                 productList.forEach(System.out::println);
                                 System.out.print("""
-
+                                        
                                             * Добавление продукта в корзину: 'ID продукта' | 'количество'
                                             * Изменение количества продукта: 'ID продукта' | 'количество'
                                             * Удаление из корзины: 'ID продукта' | 'количество = 0'
@@ -328,7 +330,7 @@ public class Main { // StartShop
                             } else {
                                 System.out.println("Цена не может быть отрицательной");
                                 System.out.print("""
-
+                                        
                                             * Добавление продукта в корзину: 'ID продукта' | 'количество'
                                             * Изменение количества продукта: 'ID продукта' | 'количество'
                                             * Удаление из корзины: 'ID продукта' | 'количество = 0'
@@ -425,54 +427,54 @@ public class Main { // StartShop
                     }
                     break;
 /** old cases
-// Оформление повторного заказа
-                case 2:
-// TODO - сохранение/исправление адреса доставки
+ // Оформление повторного заказа
+ case 2:
+ // TODO - сохранение/исправление адреса доставки
 
-                    orderService.repeatOrder(orderRepo.findByUser(currentUser).getLast(), cartService);
-                    System.out.printf("""
-                            Вы повторили заказ:
-                            %s
-                            """, cartService);
-                    System.out.print("""
-                            Оформить заказ? Y/N
-                            """);
-//                    userInput.nextLine(); // сбросить строку
-                    String in = userInput.nextLine();
-                    if (in.equalsIgnoreCase("y")) {
-                        orderCreationStation(currentUser, cartService, orderService, userInput);
-                        System.out.println("Заказ оформлен");
-                    } else {
-                        System.out.print("""
-                                Заказ сохранён, как "неоформленный"
-                                """);
-                        continue;
-                    }
-                    break;
+ orderService.repeatOrder(orderRepo.findByUser(currentUser).getLast(), cartService);
+ System.out.printf("""
+ Вы повторили заказ:
+ %s
+ """, cartService);
+ System.out.print("""
+ Оформить заказ? Y/N
+ """);
+ //                    userInput.nextLine(); // сбросить строку
+ String in = userInput.nextLine();
+ if (in.equalsIgnoreCase("y")) {
+ orderCreationStation(currentUser, cartService, orderService, userInput);
+ System.out.println("Заказ оформлен");
+ } else {
+ System.out.print("""
+ Заказ сохранён, как "неоформленный"
+ """);
+ continue;
+ }
+ break;
 
-// Отменить заказ
-                case 3:
-                    List<Order> orderList = orderService.getOrderByUser(currentUser);
-                    printOrderList(orderList);
-                    if (orderList.isEmpty()) {
-                        continue;
-                    }
-                    System.out.println("Введите номер заказа для отмены (Enter для возврата):");
-                    String userIN = userInput.nextLine();
-                    try {
-                        int index = Integer.parseInt(userIN) - 1;
-                        orderService.cancelOrder(orderList.get(index));
-                        System.out.printf("""
-                                    Заказ #%s отменён.
-                                    """, userIN);
-                    } catch (IllegalStateException e) {
-                        System.out.println(e.getMessage());
-                    } catch (IndexOutOfBoundsException e) {
-                        System.out.println("Заказа с таким номером нет.");
-                    } catch (NumberFormatException e) {
-                        // пустой ввод – просто возврат
-                    }
-                    break;
+ // Отменить заказ
+ case 3:
+ List<Order> orderList = orderService.getOrderByUser(currentUser);
+ printOrderList(orderList);
+ if (orderList.isEmpty()) {
+ continue;
+ }
+ System.out.println("Введите номер заказа для отмены (Enter для возврата):");
+ String userIN = userInput.nextLine();
+ try {
+ int index = Integer.parseInt(userIN) - 1;
+ orderService.cancelOrder(orderList.get(index));
+ System.out.printf("""
+ Заказ #%s отменён.
+ """, userIN);
+ } catch (IllegalStateException e) {
+ System.out.println(e.getMessage());
+ } catch (IndexOutOfBoundsException e) {
+ System.out.println("Заказа с таким номером нет.");
+ } catch (NumberFormatException e) {
+ // пустой ввод – просто возврат
+ }
+ break;
  */
 
 // Список заказов пользователя по запросу
@@ -529,92 +531,92 @@ public class Main { // StartShop
             }
         }
 /** old test main
-        // register new user
-        try {
-            userService.registerUser("Vigor", "89031115599", "levelvogor@hotmail.com", "Qwerty123@");
-        } catch (Exception e) {
-            e.fillInStackTrace();
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+ // register new user
+ try {
+ userService.registerUser("Vigor", "89031115599", "levelvogor@hotmail.com", "Qwerty123@");
+ } catch (Exception e) {
+ e.fillInStackTrace();
+ System.out.println(e.getMessage());
+ throw new RuntimeException(e);
+ }
 
-        // login user
-        try {
-            userService.login("levelvogor@hotmail.com", "Qwerty123@");
-        } catch (UserLoginException e) {
-            e.fillInStackTrace();
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+ // login user
+ try {
+ userService.login("levelvogor@hotmail.com", "Qwerty123@");
+ } catch (UserLoginException e) {
+ e.fillInStackTrace();
+ System.out.println(e.getMessage());
+ throw new RuntimeException(e);
+ }
 
-        // filling cart
-        cartService.addItem(productRepo.findById(31L), 9);
-        cartService.addItem(productRepo.findById(333L), 2);
-        cartService.addItem(productRepo.findById(34L), 1);
-        cartService.addItem(productRepo.findById(99L), 3);
-        cartService.updateQuantity(productRepo.findById(99L), 5);
+ // filling cart
+ cartService.addItem(productRepo.findById(31L), 9);
+ cartService.addItem(productRepo.findById(333L), 2);
+ cartService.addItem(productRepo.findById(34L), 1);
+ cartService.addItem(productRepo.findById(99L), 3);
+ cartService.updateQuantity(productRepo.findById(99L), 5);
 
-        // order product list
-        System.out.print("""
-                
-                Order list:
-                """);
-        for (CartItem item : cartService.getItem()) {
-            System.out.printf("""
-                    %s | %s QTY * %s pc/pc -> for %s
-                    """, item.getProduct().getProductName(),
-                    item.getQuantity(),
-                    item.getProduct().getProductPrice(),
-                    item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
-                    );
-        }
-        System.out.printf("""
-                Total cart price is: %s
-                """, cartService.getTotalPrice());
+ // order product list
+ System.out.print("""
 
-        // creating order
-        Order order = orderService.createOrder(userRepo.findByEmail("levelvogor@hotmail.com").get(),
-                "Ordinary street, obvious district",
-                cartService);
+ Order list:
+ """);
+ for (CartItem item : cartService.getItem()) {
+ System.out.printf("""
+ %s | %s QTY * %s pc/pc -> for %s
+ """, item.getProduct().getProductName(),
+ item.getQuantity(),
+ item.getProduct().getProductPrice(),
+ item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+ );
+ }
+ System.out.printf("""
+ Total cart price is: %s
+ """, cartService.getTotalPrice());
 
-        // get order by user
-        List<Order> orderByUser = orderService.getOrderByUser(userRepo.findByEmail("levelvogor@hotmail.com").get());
-        for (Order userOrder : orderByUser) {
-            System.out.printf("""
-                            
-                            User order ID: %s
-                            User: %s | %s (%s | %s)
-                            Order status: %s
-                            Order total price: %s
-                            Order address: %s
-                            Order list:
-                            """, userOrder.getOrderID(),
-                    userOrder.getUser().getUserId(), userOrder.getUser().getUserName(), userOrder.getUser().getUserEmail(), userOrder.getUser().getUserPhoneNumber(),
-                    userOrder.getOrderCurrentStatus(),
-                    userOrder.getOrderTotalPrice(),
-                    userOrder.getOrderDeliveryAddress()
-            );
-        }
+ // creating order
+ Order order = orderService.createOrder(userRepo.findByEmail("levelvogor@hotmail.com").get(),
+ "Ordinary street, obvious district",
+ cartService);
 
-        // user order list
-        for (CartItem item : order.getOrderProductList()) {
-            System.out.printf("""
-                    %s | %s QTY * %s pc/pc -> for %s
-                    """, item.getProduct().getProductName(),
-                    item.getQuantity(),
-                    item.getProduct().getProductPrice(),
-                    item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
-            );
-        }
+ // get order by user
+ List<Order> orderByUser = orderService.getOrderByUser(userRepo.findByEmail("levelvogor@hotmail.com").get());
+ for (Order userOrder : orderByUser) {
+ System.out.printf("""
 
-        if (cartService.getItem().isEmpty()){
-            System.out.println("Cart is empty");
-            System.out.println("Ready for new order");
-        }
+ User order ID: %s
+ User: %s | %s (%s | %s)
+ Order status: %s
+ Order total price: %s
+ Order address: %s
+ Order list:
+ """, userOrder.getOrderID(),
+ userOrder.getUser().getUserId(), userOrder.getUser().getUserName(), userOrder.getUser().getUserEmail(), userOrder.getUser().getUserPhoneNumber(),
+ userOrder.getOrderCurrentStatus(),
+ userOrder.getOrderTotalPrice(),
+ userOrder.getOrderDeliveryAddress()
+ );
+ }
+
+ // user order list
+ for (CartItem item : order.getOrderProductList()) {
+ System.out.printf("""
+ %s | %s QTY * %s pc/pc -> for %s
+ """, item.getProduct().getProductName(),
+ item.getQuantity(),
+ item.getProduct().getProductPrice(),
+ item.getProduct().getProductPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+ );
+ }
+
+ if (cartService.getItem().isEmpty()){
+ System.out.println("Cart is empty");
+ System.out.println("Ready for new order");
+ }
  */
     }
 
-// Метод выводит доступные действия для конкретного заказа и выполняет их
+    // Метод выводит доступные действия для конкретного заказа и выполняет их
     private static void orderActionMenu(Order order,
                                         OrderService orderService,
                                         CartService cartService,
@@ -647,7 +649,7 @@ public class Main { // StartShop
 // Оформление уже созданного заказа
                 case 1:
                     System.out.print("""
-//                            Order confirmation station
+                            //                            Order confirmation station
                             """);
                     if (order.getOrderCurrentStatus() != OrderStatus.CREATED) {
                         System.out.print("""
@@ -683,7 +685,7 @@ public class Main { // StartShop
 // Отмена заказа
                 case 2:
                     System.out.print("""
-//                            Order cancellation station
+                            //                            Order cancellation station
                             """);
                     try {
                         orderService.cancelOrder(order);
@@ -712,7 +714,7 @@ public class Main { // StartShop
 // TODO - сохранение/исправление адреса доставки
 
                     System.out.print("""
-//                            Order repetition station
+                            //                            Order repetition station
                             """);
                     Order newOrder = orderService.repeatOrder(order, cartService);
                     System.out.printf("""
@@ -762,7 +764,7 @@ public class Main { // StartShop
 // Изменить адрес доставки в заказе
                 case 4:
                     System.out.print("""
-//                            Order address correction station
+                            //                            Order address correction station
                             """);
                     System.out.print("""
                             Введите новый адрес доставки:
@@ -799,7 +801,7 @@ public class Main { // StartShop
         }
     }
 
-// Метод оформления заказа
+    // Метод оформления заказа
     private static void orderCreationStation(User currentUser,
                                              CartService cartService,
                                              OrderService orderService,
@@ -816,7 +818,7 @@ public class Main { // StartShop
         }
 
         System.out.print("""
-//                <Order Creation Station>
+                //                <Order Creation Station>
                 """);
         System.out.print("""
                 Введите адрес доставки:
@@ -831,7 +833,7 @@ public class Main { // StartShop
         System.out.println("DONE");
     }
 
-// Вывод списка заказов
+    // Вывод списка заказов
     private static void printOrderList(List<Order> orderList) {
         if (orderList.isEmpty()) {
             System.out.println("Нет заказов.");
