@@ -46,6 +46,24 @@ public class OrderItemEntity {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
+    public OrderItemEntity(OrderEntity order, ProductEntity product, String productNameSnapshot,
+                           String productBrandSnapshot, BigDecimal unitPriceSnapshot,
+                           @NotNull(message = "Количество обязательно для отображения в корзине")
+                           @Min(value = 1, message = "Количество должно быть не менее 1") int quantity) {
+        this.order = order;
+        this.product = product;
+        this.productNameSnapshot = productNameSnapshot;
+        this.productBrandSnapshot = productBrandSnapshot;
+        this.unitPriceSnapshot = unitPriceSnapshot;
+        this.quantity = quantity;
+    }
+
+    //  Если изменится quantity,
+    //  subtotal пересчитается автоматически
+    public BigDecimal getSubtotal() {
+        return unitPriceSnapshot.multiply(BigDecimal.valueOf(quantity));
+    }
+
     // generated
     @Override
     public final boolean equals(Object obj) {
