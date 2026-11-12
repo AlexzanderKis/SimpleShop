@@ -3,14 +3,10 @@ package org.com.domain.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
@@ -43,12 +39,22 @@ public class CartItemDTO {
     @Schema(description = "URL изображения")
     private String imageURL;
 
+    public CartItemDTO(Long productId, String productName, String category, String brand, BigDecimal unitPrice, int quantity, String imageURL) {
+        this.productId = productId;
+        this.productName = productName;
+        this.category = category;
+        this.brand = brand;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+        this.subtotal = unitPrice != null ? unitPrice.multiply(BigDecimal.valueOf(quantity)) : BigDecimal.ZERO;
+        this.imageURL = imageURL;
+    }
+
     // TODO: CartDto и CartItemDto содержат вычисляемые поля, которые ломаются при setItems/setQuantity
     public void setQuantity(int quantity) {
         this.quantity = quantity;
         if (this.unitPrice != null){
             this.subtotal = this.unitPrice.multiply(BigDecimal.valueOf(quantity));
-
         }
     }
 }
