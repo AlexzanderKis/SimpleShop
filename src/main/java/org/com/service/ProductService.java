@@ -1,22 +1,37 @@
 package org.com.service;
 
-import org.com.CategoryOfProd;
-import org.com.Product;
+import org.com.domain.dto.ProductDTO;
+import org.com.domain.dto.ProductFilterDTO;
+import org.com.domain.entity.enums.CategoryOfProd;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+/**
+    Сервис товаров
+    Инкапсулирует логику фильтрации и поиска по каталогу
+    Возвращает DTO, не раскрывает Entity
+ */
 public interface ProductService {
-    List<Product> getAllProduct(); // список продуктов
+    List<ProductDTO> getAllProduct(); // Возвращает все товары каталога
 
-    List<CategoryOfProd> getAllProductCategories(); // список категорий
+    List<CategoryOfProd> getAllCategories(); // Возвращает список всех категорий
 
-    List<Product> filterProductByCategory(CategoryOfProd category); // отфильтровать продукты по категории
+    List<ProductDTO> filterProductByCategory(CategoryOfProd category); // отфильтровать продукты по категории
 
-    List<Product> filterProductByPriceRange(BigDecimal min, BigDecimal max); // фильтровать по цене продукта от мин к мах
+    List<ProductDTO> filterByPriceRange(BigDecimal min, BigDecimal max); // фильтровать по цене продукта от мин к мах
 
-    List<Product> searchProductByKeyword(String keyword); // искать прод по ключу
+    List<ProductDTO> searchByKeyword(String keyword); // искать прод по ключу
 
-    Optional<Product> getProductById(Long id); // получить продукт по ID
+    // Универсальная фильтрация по нескольким критериям
+    List<ProductDTO> filter(ProductFilterDTO filterDTO);
+
+    Optional<ProductDTO> getProductById(Long id); // получить продукт по ID
+
+    // Создаёт новый товар (ADMIN ONLY)
+    ProductDTO createProduct(ProductDTO productDTO);
+
+    // Удаляет товар по ID (ADMIN ONLY)
+    void deleteProduct(Long id);
 }
