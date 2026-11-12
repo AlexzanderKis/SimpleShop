@@ -1,17 +1,32 @@
 package org.com.repos;
 
-import org.com.User;
+import org.com.domain.entity.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface UserRepo {
-    Optional<User> findById(String userId);
+// стандартные методы для поиска и проверки существования пользователя
 
-    Optional<User> findByEmail(String userEmail);
+/**
+    Репозиторий пользователей
+    поиск по email/телефону (возвращает Optional, чтобы явно показать возможность null) и проверку существования (existsBy)
+    ID пользователя - строковый (генерируется приложением), поэтому JpaRepository<UserEntity, String>
+ */
+@Repository
+public interface UserRepo extends JpaRepository<UserEntity, String> {
 
-    Optional<User> findByPhoneNumber(String userPhoneNumber);
+    Optional<UserEntity> findByEmail(String email);
 
-    void save(User user);
+    Optional<UserEntity> findByPhoneNumber(String phoneNumber);
 
-    void deleteUser(User user);
+    boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    //    Optional<UserEntity> findById(String userId);
+
+//    void save(UserEntity user);
+
+//    void deleteUser(UserEntity user);
 }
