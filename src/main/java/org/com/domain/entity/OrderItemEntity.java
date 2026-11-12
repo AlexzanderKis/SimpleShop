@@ -40,6 +40,9 @@ public class OrderItemEntity {
     @Column(name = "product_price_snapshot", precision = 12, scale = 2, nullable = false)
     private BigDecimal productPriceSnapshot;
 
+    @Column(name = "unit_price_snapshot", precision = 12, scale = 2, nullable = false)
+    private BigDecimal unitPriceSnapshot;
+
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
