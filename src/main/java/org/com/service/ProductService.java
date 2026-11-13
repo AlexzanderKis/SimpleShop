@@ -14,20 +14,20 @@ import java.util.Optional;
     Возвращает DTO, не раскрывает Entity
  */
 public interface ProductService {
-    List<ProductDTO> getAllProduct(); // Возвращает все товары каталога
+    Optional<ProductDTO> getProductById(Long id); // получить продукт по ID
+
+    List<ProductDTO> getAllProducts(); // Возвращает все товары каталога
 
     List<CategoryOfProd> getAllCategories(); // Возвращает список всех категорий
 
-    List<ProductDTO> filterProductByCategory(CategoryOfProd category); // отфильтровать продукты по категории
+    List<ProductDTO> filterByCategory(CategoryOfProd category); // отфильтровать продукты по категории
 
     List<ProductDTO> filterByPriceRange(BigDecimal min, BigDecimal max); // фильтровать по цене продукта от мин к мах
 
     List<ProductDTO> searchByKeyword(String keyword); // искать прод по ключу
-
     // Универсальная фильтрация по нескольким критериям
-    List<ProductDTO> filter(ProductFilterDTO filterDTO);
 
-    Optional<ProductDTO> getProductById(Long id); // получить продукт по ID
+    List<ProductDTO> filter(ProductFilterDTO filterDTO);
 
     // Создаёт новый товар (ADMIN ONLY)
     ProductDTO createProduct(ProductDTO productDTO);
