@@ -1,11 +1,12 @@
-package org.com.tools;
-
-import org.com.User;
+package org.com.validation;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+   Класс больше не используется
+ */
 public class PasswordEncoder {
     /*
         Принцип одностороннего хеширования:
