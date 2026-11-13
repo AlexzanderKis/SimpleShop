@@ -1,48 +1,28 @@
 package org.com;
 
-import static org.com.tools.RUPhoneNumberValidator.validateNumber;
-import static org.com.tools.PasswordValidator.validatePassword;
-
-import org.apache.commons.validator.routines.EmailValidator;
-
-import org.com.exceptions.InvalidEmailException;
-import org.com.exceptions.InvalidPasswordException;
-import org.com.exceptions.InvalidPhoneNumberException;
-import org.com.repos.OrderRepo;
-import org.com.repos.ProductRepo;
-import org.com.repos.UserRepo;
-import org.com.service.CartService;
-import org.com.service.OrderService;
-import org.com.service.ProductService;
-import org.com.service.UserService;
-import org.com.service.impl.Cart;
-import org.com.service.impl.OrderServiceImpl;
-import org.com.service.impl.ProductServiceImpl;
-import org.com.service.impl.UserServiceImpl;
-
-import java.io.File;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Примеры возможностей программы:
- * ------------------------------
- * Вывод доступных для покупки товаров
- * Фильтрация товаров по ключевым словам, ценам, производителям
- * Составление продуктовой корзины пользователя
- * Отмена заказа, повтор заказа
- * Трекинг заказа в системе доставки
+         Примеры возможностей программы:
+         ------------------------------
+         Вывод доступных для покупки товаров
+         Фильтрация товаров по ключевым словам, ценам, производителям
+         Составление продуктовой корзины пользователя
+         Отмена заказа, повтор заказа
+         Трекинг заказа в системе доставки
  */
-public class Main { // StartShop
+
+@SpringBootApplication
+public class SimpleShopApplicationMain { // StartShop
     public static void main(String[] args) throws Exception {
         System.out.print("""
                     <*Магазин Открыт*>
                 """);
 
+        SpringApplication.run(SimpleShopApplicationMain.class, args);
+
+        /*
 // Репозитории
         UserRepo userRepo = new InMemoryUserRepo();
         OrderRepo orderRepo = new InMemoryOrderRepo();
@@ -188,13 +168,13 @@ public class Main { // StartShop
             if (select == 0) {
                 break;
             }
-/** // парсер списка продуктов
- try {
- ProductListParser.jsonParser();
- } catch (IOException e) {
- System.out.println("Error reading file. File corrupted or no exist: "+e.getMessage());
- }
- */
+ // парсер списка продуктов
+// try {
+// ProductListParser.jsonParser();
+// } catch (IOException e) {
+// System.out.println("Error reading file. File corrupted or no exist: "+e.getMessage());
+// }
+
 
 // Вывод списка продуктов доступных к покупке
             System.out.print("""
@@ -359,18 +339,18 @@ public class Main { // StartShop
                         if (prodID == 5 && !cartService.getItem().isEmpty()) {
                             userInput.nextLine(); // сбросить строку
                             orderCreationStation(currentUser, cartService, orderService, userInput);
-/*
-                            userInput.nextLine(); // сбросить строку
-                            System.out.println("Order Creation Station");
-                            System.out.println("Type address:");
-                            String deliveryAddress = userInput.nextLine();
-                            if (deliveryAddress.isEmpty()) {
-                                System.out.println("No address - no order.");
-                                continue;
-                            } else {
-                                orderService.createOrder(currentUser, deliveryAddress, cartService);
-                            }
- */
+
+//                            userInput.nextLine(); // сбросить строку
+//                            System.out.println("Order Creation Station");
+//                            System.out.println("Type address:");
+//                            String deliveryAddress = userInput.nextLine();
+//                            if (deliveryAddress.isEmpty()) {
+//                                System.out.println("No address - no order.");
+//                                continue;
+//                            } else {
+//                                orderService.createOrder(currentUser, deliveryAddress, cartService);
+//                            }
+
                             break;
                         }
 
@@ -426,6 +406,8 @@ public class Main { // StartShop
                         }
                     }
                     break;
+         */
+
 /** old cases
  // Оформление повторного заказа
  case 2:
@@ -477,6 +459,7 @@ public class Main { // StartShop
  break;
  */
 
+/**
 // Список заказов пользователя по запросу
                 case 2:
                     while (true) {
@@ -530,6 +513,8 @@ public class Main { // StartShop
                 break;
             }
         }
+ */
+
 /** old test main
  // register new user
  try {
@@ -614,8 +599,8 @@ public class Main { // StartShop
  System.out.println("Ready for new order");
  }
  */
-    }
 
+/**
     // Метод выводит доступные действия для конкретного заказа и выполняет их
     private static void orderActionMenu(Order order,
                                         OrderService orderService,
@@ -848,5 +833,8 @@ public class Main { // StartShop
                 System.out.println("-------------------------");
             }
         }
+    }
+    */
+
     }
 }
