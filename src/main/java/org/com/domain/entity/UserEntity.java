@@ -10,6 +10,7 @@ import org.com.domain.entity.enums.Role;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -39,6 +40,16 @@ public class UserEntity {
 
     @Column(name = "registration_date", nullable = false, updatable = false)
     private LocalDateTime registrationDate = LocalDateTime.now();
+
+    public UserEntity(String id, String name, String email, String phoneNumber,
+                      String passwordHash, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object obj) {
