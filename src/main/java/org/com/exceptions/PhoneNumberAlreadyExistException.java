@@ -1,10 +1,10 @@
 package org.com.exceptions;
 
-public class PhoneNumberAlreadyExistException extends Exception {
-    public PhoneNumberAlreadyExistException() {
-        super("""                
+public class PhoneNumberAlreadyExistException extends RuntimeException {
+    public PhoneNumberAlreadyExistException(String message) {
+        super(String.format("""                
                 ?PhoneNumberAlreadyExist?
-                Пользователь с таким номером телефона уже существует.
-                """);
+                Пользователь с номером телефона %s уже существует.
+                """, message));
     }
 }
