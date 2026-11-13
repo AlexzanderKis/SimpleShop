@@ -1,107 +1,164 @@
 package org.com.service.impl;
 
-import static org.com.tools.RUPhoneNumberValidator.validateNumber;
-import static org.com.tools.PasswordValidator.validatePassword;
-
 import org.apache.commons.validator.routines.EmailValidator;
 
-import org.com.User;
+import org.com.domain.dto.UserLoginDTO;
+import org.com.domain.dto.UserRegistrationDTO;
+import org.com.domain.dto.UserResponseDTO;
+import org.com.domain.entity.UserEntity;
+import org.com.domain.entity.enums.Role;
 import org.com.exceptions.*;
 import org.com.repos.UserRepo;
 import org.com.service.UserService;
-import org.com.tools.PasswordEncoder;
+import org.com.tools.PasswordValidator;
+import org.com.tools.RUPhoneNumberValidator;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
+    private static final String USER_ID_HEAD = "USR-";
+
     private final UserRepo userRepo;
-    private User currentUser;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepo userRepo) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
-    }
-
-    public UserRepo getUserRepo() {
-        return userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // регистрирует и валидирует данные
     @Override
-    public void registerUser(String name, String phoneNumber, String email, String password)
-            throws Exception {
+    public UserResponseDTO registerUser(UserRegistrationDTO userRegistrationDTO) {
 
-        User user = new User(UUID.randomUUID().toString().substring(0, 12).toUpperCase(Locale.ROOT),
-                name,
-                email,
-                phoneNumber);
+        RUPhoneNumberValidator.validateNumber(userRegistrationDTO.getPhoneNumber());
 
 // PH NUM VALIDATION
-        if (validateNumber(phoneNumber)) {
-            if (userRepo.findByPhoneNumber(phoneNumber).isPresent()) {
-                throw new PhoneNumberAlreadyExistException(); // "?PhoneNumberAlreadyExist?"
-            }
-        } else {
-            throw new InvalidPhoneNumberException(); // phone num incorrect "?IncorrectPhoneNumber?"
+        if (userRepo.existsByPhoneNumber(userRegistrationDTO.getPhoneNumber().trim())) {
+            throw new PhoneNumberAlreadyExistException(userRegistrationDTO.getPhoneNumber());
         }
 
 // EMAIL VALIDATION
-        if (EmailValidator.getInstance().isValid(email)) {
-            if (userRepo.findByEmail(email).isPresent()) {
-                throw new MailAlreadyExistException("?EmailAlreadyExist?");
-            }
-        } else {
-            throw new InvalidEmailException(); // "email incorrect" "?InvalidEmail?"
+        if (!EmailValidator.getInstance().isValid(userRegistrationDTO.getEmail())) {
+            throw new InvalidEmailException();
+        }
+
+        if (userRepo.existsByEmail(userRegistrationDTO.getEmail().trim().toLowerCase(Locale.ROOT))) {
+            throw new MailAlreadyExistException();
         }
 
 // PASSWORD VALIDATION
-        if (validatePassword(password)) {
-            user.setUserPassword(PasswordEncoder.hashPassword(password));
-            userRepo.save(user);
-//            System.out.println("?UserSaved?");
-        } else {
-            throw new InvalidPasswordException(); // password incorrect "?PasswordIncorrect?"
-        }
-//        System.out.println("?Registration successfully done?");
+        PasswordValidator.validatePassword(userRegistrationDTO.getPassword());
+
+// CREATE ENTITY
+        String userId = USER_ID_HEAD + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
+        String encodedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
+        UserEntity user = new UserEntity(
+                userId,
+                userRegistrationDTO.getName().trim(),
+                userRegistrationDTO.getEmail().trim().toLowerCase(Locale.ROOT),
+                userRegistrationDTO.getPhoneNumber().trim(),
+                encodedPassword,
+                Role.ROLE_USER);
+
+        return mapToDTO(user);
     }
 
     // аутентифицирует и обновляет текущую сессию
     @Override
-    public void login(String email, String password) throws UserLoginException {
-        Optional<User> userToLogin = userRepo.findByEmail(email);
+    @Transactional(readOnly = true)
+    public UserResponseDTO login(UserLoginDTO userLoginDTO) {
+        UserEntity user = userRepo.findByEmail(userLoginDTO.getEmail().trim().toLowerCase(Locale.ROOT))
+                .orElseThrow(UserLoginException::new);
 
-        if (userToLogin.isPresent() && PasswordEncoder.hashMatchesPassword(password, userToLogin.get().getUserPassword())) {
-//            System.out.print("""
-//                            ?UserExist?
-//                    """);
-//            System.out.print("""
-//                            ?PasswordCorrect?
-//                    """);
-            this.currentUser = userToLogin.get();
-        } else {
-            throw new UserLoginException("?User email no exist or password incorrect?");
+        // проверка совпадения пароля
+        if (!passwordEncoder.matches(userLoginDTO.getPassword(), user.getPasswordHash()))){
+            throw new UserLoginException();
         }
+        return mapToDTO(user);
     }
 
     @Override
-    public Optional<User> getCurrentUser() {
-        return Optional.ofNullable(currentUser);
+    @Transactional(readOnly = true)
+    public Optional<UserResponseDTO> getUserById(String userId) {
+        return userRepo.findById(userId).map(this::mapToDTO);
     }
 
     @Override
-    public Optional<User> getUserById(String userId) {
-        return userRepo.findById(userId);
+    @Transactional(readOnly = true)
+    public Optional<UserResponseDTO> getUserByPhoneNumber(String userPhoneNumber) {
+        return userRepo.findByPhoneNumber(userPhoneNumber.trim()).map(this::mapToDTO);
     }
 
     @Override
-    public Optional<User> getUserByPhoneNumber(String userPhoneNumber) {
-        return userRepo.findByPhoneNumber(userPhoneNumber);
+    @Transactional(readOnly = true)
+    public Optional<UserResponseDTO> getUserByEmail(String userEmail) {
+        return userRepo.findByEmail(userEmail.toLowerCase(Locale.ROOT)).map(this::mapToDTO);
     }
 
+    /**
+             Возвращает Entity пользователя по email
+             НАМЕРЕННО нарушает правило «наружу только DTO», потому что:
+             - используется внутренними сервисами (OrderServiceImpl) для загрузки UserEntity,
+             - используется Spring Security (через loadUserByUsername)
+
+             ! НЕ вызывать из контроллеров !
+
+             Для внешних вызовов -> getUserByEmail()
+     */
     @Override
-    public Optional<User> getUserByEmail(String userEmail) {
-        return userRepo.findByEmail(userEmail);
+    @Transactional(readOnly = true)
+    public UserEntity getEntityByEmail(String email) {
+        return userRepo.findByEmail(email.trim().toLowerCase(Locale.ROOT))
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с email " + email + " не найден"));
+    }
+
+    /**
+             Spring Security вызывает этот метод при HTTP Basic аутентификации.
+             username - это email (так настроено в SecurityConfig).
+             Возвращается org.springframework.security.core.userdetails.User - стандартная реализация UserDetails.
+             SimpleGrantedAuthority(user.getRole().name()) - роль в формате ROLE_USER или ROLE_ADMIN.
+             Spring Security ожидает префикс ROLE_, и он уже есть в enum Role.
+
+             Зачем это: клиент присылает Authorization: Basic base64(email:password),
+             Spring Security:
+             Декодирует, получает email и пароль.
+             Вызывает loadUserByUsername(email).
+             Сравнивает passwordEncoder.matches(rawPassword, userDetails.getPassword()).
+             Если совпало создаёт Authentication с ролями из UserDetails.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepo.findByEmail(username.trim().toLowerCase(Locale.ROOT))
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
+
+        return new User(
+                user.getEmail(),
+                user.getPasswordHash(),
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())));
+    }
+
+    // маппинг Entity to DTO
+    private UserResponseDTO mapToDTO(UserEntity entity) {
+        return new UserResponseDTO(
+                entity.getId(),
+                entity.getName(),
+                entity.getEmail(),
+                entity.getPhoneNumber(),
+                entity.getRole(),
+                entity.getRegistrationDate());
     }
 }
