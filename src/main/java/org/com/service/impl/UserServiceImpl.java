@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserLoginException::new);
 
         // проверка совпадения пароля
-        if (!passwordEncoder.matches(userLoginDTO.getPassword(), user.getPasswordHash()))){
+        if (!passwordEncoder.matches(userLoginDTO.getPassword(), user.getPasswordHash())){
             throw new UserLoginException();
         }
         return mapToDTO(user);
