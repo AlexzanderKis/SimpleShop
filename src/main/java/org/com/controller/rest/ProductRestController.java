@@ -2,6 +2,8 @@ package org.com.controller.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.com.domain.dto.ProductDTO;
@@ -11,7 +13,6 @@ import org.com.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -62,6 +63,9 @@ public class ProductRestController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Получить товар по ID", description = "Возвращает подробные сведения о товаре")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Товар найден"),
+            @ApiResponse(responseCode = "404", description = "Товар не найден")})
     public ResponseEntity<ProductDTO> getProductBtId(@PathVariable Long id){
         return productService.getProductById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
