@@ -10,8 +10,6 @@ import org.com.domain.entity.enums.Role;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@RequiredArgsConstructor
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
