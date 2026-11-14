@@ -236,7 +236,7 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity previousOrder = getOrderORThrow(orderId); // прошлый заказ который повторяем;
 
         // Кладём все товары обратно в корзину
-        for (OrderItemEntity item : order.getItems()) {
+        for (OrderItemEntity item : previousOrder.getItems()) {
             if (item.getProduct() != null) {
                 cartService.addItem(item.getProduct().getId(), item.getQuantity());
             }
