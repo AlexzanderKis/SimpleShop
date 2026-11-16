@@ -33,7 +33,7 @@ public class ProductEntity {
     @Column(name = "category", length = 50, nullable = false)
     private CategoryOfProd category;
 
-    @Column(name = "price", length = 12, scale = 2, nullable = false)
+    @Column(name = "price", precision = 12, scale = 2, nullable = false)
     private BigDecimal price;
 
     @ElementCollection(fetch = FetchType.EAGER)
