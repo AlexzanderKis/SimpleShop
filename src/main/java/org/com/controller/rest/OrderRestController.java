@@ -97,4 +97,24 @@ public class OrderRestController {
                                                          @Valid @RequestBody OrderStatusUpdateDTO orderStatusUpdateDTO){
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId,orderStatusUpdateDTO));
     }
+
+    /**
+     Повторяет предыдущий заказ
+     !ВАЖНО! метод HE создаёт новый заказ сразу:
+     1. Берёт позиции из указанного заказа
+     2. Добавляет их в текущую корзину пользователя
+     3. Создаёт черновик нового заказа
+     Пользователь должен затем самостоятельно подтвердить оформление
+
+     @param orderId ID старого заказа
+     @param userDetails текущий аутентифицированный пользователь (заказ должен принадлежать ему)
+     @return возвращает черновик нового заказа
+     */
+    @PostMapping("/{orderId}/repeat")
+    @Operation(summary = "Повторить заказ", description = "Добавляет товары из предыдущего заказа обратно в корзину и создает черновик нового заказа")
+    public ResponseEntity<OrderResponseDTO> repeatOrder(@PathVariable String orderId,
+                                                        @AuthenticationPrincipal UserDetails userDetails){
+        
+        return ResponseEntity.ok(orderService.repeatOrder(orderId, userDetails.getUsername()));
+    }
 }
