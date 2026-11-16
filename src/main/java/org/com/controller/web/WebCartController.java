@@ -38,7 +38,7 @@ public class WebCartController {
         return "cart";
     }
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public String addToCart(@RequestParam Long productId,
                             @RequestParam(defaultValue = "1") int quantity,
                             @RequestParam(required = false, defaultValue = "/catalog") String returnUrl,
