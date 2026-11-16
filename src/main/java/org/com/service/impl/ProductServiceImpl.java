@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
     // Возвращает все категории продуктов
     @Override
     public List<CategoryOfProd> getAllCategories() {
-        return List.of();
+        return Arrays.asList(CategoryOfProd.values());
     }
 
     // Фильтрация по категории
