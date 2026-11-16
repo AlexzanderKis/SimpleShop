@@ -73,7 +73,9 @@ public class UserServiceImpl implements UserService {
                 encodedPassword,
                 Role.ROLE_USER);
 
-        return mapToDTO(user);
+        // Сохраняем юзера в БД
+        UserEntity saveUser = userRepo.save(user);
+        return mapToDTO(saveUser);
     }
 
     // аутентифицирует и обновляет текущую сессию
