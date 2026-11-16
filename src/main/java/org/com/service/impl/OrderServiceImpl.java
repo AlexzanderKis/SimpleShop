@@ -281,10 +281,12 @@ public class OrderServiceImpl implements OrderService {
     // Статус заказа меняет только админ
     @Override
     public OrderResponseDTO updateOrderStatus(String orderId, OrderStatusUpdateDTO dto) {
-//        OrderEntity order = orderRepo.findById(orderId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Заказ #" + orderId + " не найден"));
-        OrderEntity order = getOrderORThrow(orderId);
-        return null;
+        OrderEntity order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Заказ #" + orderId + " не найден"));
+
+        order.setStatus(dto.getNewStatus());
+        OrderEntity savedOrder = orderRepo.save(order);
+        return mapToDTO(savedOrder);
     }
 
     // Обновление адреса доставки в заказе
