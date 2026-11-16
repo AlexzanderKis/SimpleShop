@@ -35,9 +35,6 @@ public class OrderItemEntity {
     @Column(name = "product_brand_snapshot", length = 100)
     private String productBrandSnapshot;
 
-    @Column(name = "product_price_snapshot", precision = 12, scale = 2, nullable = false)
-    private BigDecimal productPriceSnapshot;
-
     @Column(name = "unit_price_snapshot", precision = 12, scale = 2, nullable = false)
     private BigDecimal unitPriceSnapshot;
 
